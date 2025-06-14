@@ -1,5 +1,7 @@
+
 import { useNavigate } from "react-router-dom";
 import { Search, LogIn } from "lucide-react";
+import { useState } from "react";
 
 const favoritePlants = [
   {
@@ -23,11 +25,23 @@ const favoritePlants = [
 // Use the user's uploaded greenic plant background image
 const bgImage = "/lovable-uploads/57e20818-f97d-4a73-ba99-7f6eedf5d5f9.png";
 
+const plantTypes = [
+  "All",
+  "Flower",
+  "Tree",
+  "Cactus",
+  "Herb",
+  "Shrub",
+  "Vine",
+  "Rare",
+];
+
 const Index = () => {
   const navigate = useNavigate();
+  const [plantType, setPlantType] = useState("All");
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+    <div className="relative min-h-screen flex flex-col items-center justify-start overflow-x-hidden">
       {/* BACKGROUND IMAGE */}
       <div
         className="absolute inset-0 -z-10"
@@ -38,48 +52,47 @@ const Index = () => {
         }}
       />
       {/* DARK OVERLAY FOR TEXT READABILITY */}
-      <div className="absolute inset-0 -z-10 bg-black/40" />
-      
-      {/* Favorite Plants (Avatars) with green glass effect */}
-      <div className="absolute top-12 left-1/2 -translate-x-1/2 z-0 w-fit">
-        <div className="flex gap-4 px-6 py-3 bg-emerald-200/30 border border-white/30 backdrop-blur-md rounded-2xl shadow-lg">
-          {favoritePlants.map((plant, idx) => (
-            <div key={idx} className="flex flex-col items-center">
-              <img
-                src={plant.image}
-                alt={plant.name}
-                className="w-20 h-20 rounded-full border-4 border-green-200 shadow-lg object-cover bg-green-50"
-              />
-              <span className="mt-2 text-white text-xs shadow text-center drop-shadow">{plant.name}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-      {/* MAIN CONTENT */}
-      <div className="relative z-10 flex flex-col items-center w-full max-w-md mt-40 sm:mt-52 p-4">
-        {/* Welcome */}
+      <div className="absolute inset-0 -z-10 bg-black/60" />
+
+      <main className="relative z-10 flex flex-col items-center w-full max-w-2xl mx-auto px-2 py-10">
+
+        {/* Welcome Section */}
         <h1 className="text-3xl md:text-4xl font-extrabold text-green-100 mb-2 text-center drop-shadow">
           Welcome to Sproutsly
         </h1>
         <div className="text-green-50 mb-8 text-lg text-center max-w-prose drop-shadow">
           Discover & swap the favorite plants of your neighbourhood 🌱
         </div>
-        {/* Search Bar (glassmorphism, white) */}
-        <form className="w-full mb-6" onSubmit={e => e.preventDefault()}>
-          <div className="relative">
+
+        {/* Search Bar Section */}
+        <form className="w-full mb-8" onSubmit={e => e.preventDefault()}>
+          <div className="flex items-center gap-2 relative">
+            {/* Main Search Input */}
             <input
               id="search-plants"
               type="text"
-              placeholder="Search for neighborhood plants..."
-              className="w-full rounded-2xl border border-white/30 bg-white/20 backdrop-blur-md pl-12 pr-4 py-4 text-xl text-green-900 placeholder:text-green-900/50 shadow focus:ring-2 focus:ring-green-200 focus:outline-none transition"
+              placeholder="Search for neighbourhood plants..."
+              className="w-full rounded-2xl border border-white/20 bg-black/60 backdrop-blur-xl pl-12 pr-4 py-4 text-xl text-green-100 placeholder:text-green-300/80 shadow focus:ring-2 focus:ring-green-200 focus:outline-none transition"
               autoComplete="off"
             />
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400 w-7 h-7" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-green-300 w-7 h-7" />
+            {/* Plant Type Dropdown */}
+            <select
+              className="rounded-xl bg-black/70 border border-white/10 text-green-100 py-2 px-3 min-w-[120px] focus:outline-none focus:ring-2 focus:ring-green-400 transition"
+              value={plantType}
+              onChange={e => setPlantType(e.target.value)}
+              aria-label="Filter by plant type"
+            >
+              {plantTypes.map(type => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
           </div>
         </form>
-        {/* Login Section with neutral glassmorphism */}
-        <div className="w-full flex justify-center">
-          <div className="w-full flex justify-center bg-black/40 border border-white/30 backdrop-blur-md rounded-xl shadow-lg py-3">
+
+        {/* Login Section: Glassmorphic, darker */}
+        <div className="w-full flex justify-center mb-24">
+          <div className="w-full flex justify-center bg-black/70 border border-white/30 backdrop-blur-lg rounded-xl shadow-lg py-4">
             <button
               className="flex items-center gap-2 text-white font-bold px-8 text-lg group transition"
               type="button"
@@ -90,7 +103,51 @@ const Index = () => {
             </button>
           </div>
         </div>
-      </div>
+
+        {/* --- Ample Space --- */}
+        <div className="h-12" />
+
+        {/* Favorite Plants Avatars */}
+        <div className="w-full flex flex-col items-center mb-10">
+          <h2 className="text-lg font-bold text-green-100 mb-4 text-center drop-shadow">Popular in your neighbourhood</h2>
+          <div className="flex gap-4 px-6 py-3 bg-emerald-200/10 border border-white/20 backdrop-blur-md rounded-2xl shadow-md">
+            {favoritePlants.map((plant, idx) => (
+              <div key={idx} className="flex flex-col items-center">
+                <img
+                  src={plant.image}
+                  alt={plant.name}
+                  className="w-16 h-16 rounded-full border-4 border-green-300 shadow object-cover bg-green-50"
+                />
+                <span className="mt-2 text-green-100 text-xs shadow text-center drop-shadow">{plant.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* --- More Page Details --- */}
+        <div className="w-full max-w-md mt-12 flex flex-col items-center">
+          <h3 className="text-xl font-bold text-green-200 mb-3 tracking-wide drop-shadow">Why Sproutsly?</h3>
+          <ul className="text-green-100 mb-4 text-base space-y-2">
+            <li>🌿 Swap, give, or sell plants with neighbors easily</li>
+            <li>📷 Share photos and tips about your plant babies</li>
+            <li>🧑‍🌾 Join a green community, learn and grow together</li>
+            <li>🔍 Discover rare finds near you</li>
+            <li>🚶‍♂️ Meet plant lovers—right in your neighborhood</li>
+          </ul>
+          <div className="mt-6 mb-3 flex flex-col items-center">
+            <span className="font-semibold text-green-300 text-lg mb-2">Ready to start sharing?</span>
+            <button
+              className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-8 rounded-xl shadow transition"
+              onClick={() => navigate("/post")}
+            >
+              Post Your Plant Now
+            </button>
+          </div>
+          <div className="text-green-200/70 mt-8 text-sm text-center">
+            Sproutsly is about building a thriving, sharing, sustainable community, one plant at a time.🌱
+          </div>
+        </div>
+      </main>
     </div>
   );
 };
