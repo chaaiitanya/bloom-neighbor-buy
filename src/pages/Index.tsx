@@ -2,6 +2,9 @@
 import { PlantCard } from "@/components/PlantCard";
 import BottomTabNav from "@/components/BottomTabNav";
 import { useNavigate } from "react-router-dom";
+import { Search } from "lucide-react";
+import TrendingPlants from "@/components/TrendingPlants";
+import SeasonalPlants from "@/components/SeasonalPlants";
 
 // Placeholder listings
 const listings = [
@@ -52,19 +55,40 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col pb-20 bg-gradient-to-br from-green-50 to-white">
-      <header className="flex items-end justify-between px-4 pt-6 pb-3">
-        <div>
-          <h1 className="text-2xl font-bold text-green-900">Sproutsly</h1>
-          <div className="text-green-500 text-sm">Plants near you</div>
+      <header className="flex flex-col gap-4 px-4 pt-6 pb-1">
+        <div className="flex items-end justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-green-900">Sproutsly</h1>
+            <div className="text-green-500 text-sm">Plants near you</div>
+          </div>
+          <button
+            className="bg-green-100 text-green-800 font-bold px-4 py-2 rounded-xl shadow-sm hover:bg-green-200 transition text-sm"
+            onClick={() => navigate("/post")}
+          >
+            + Sell a plant
+          </button>
         </div>
-        <button
-          className="bg-green-100 text-green-800 font-bold px-4 py-2 rounded-xl shadow-sm hover:bg-green-200 transition text-sm"
-          onClick={() => navigate("/post")}
-        >
-          + Sell a plant
-        </button>
+        {/* Search bar */}
+        <div className="mt-2">
+          <label className="sr-only" htmlFor="search-plants">
+            Search plants in neighborhood
+          </label>
+          <div className="relative">
+            <input
+              id="search-plants"
+              type="text"
+              placeholder="Search for plants nearby..."
+              className="w-full rounded-lg border border-green-200 pl-10 pr-4 py-2 focus:ring-2 focus:ring-green-200 focus:outline-none text-base bg-green-50 placeholder:text-green-300"
+              // For now, search is not wired up
+              autoComplete="off"
+            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-green-400 w-5 h-5" />
+          </div>
+        </div>
       </header>
       <main className="flex-1 px-3">
+        <TrendingPlants />
+        <SeasonalPlants />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           {listings.map((listing, idx) => (
             <PlantCard key={idx} {...listing} />
