@@ -27,6 +27,62 @@ const demoPlants = [
     location: "Oakwood",
     seller: "Jessica",
   },
+  {
+    image: "/placeholder.svg",
+    name: "Aloe Vera",
+    price: "$8",
+    distance: "3 km",
+    location: "Midtown",
+    seller: "Olivia",
+  },
+  {
+    image: "/placeholder.svg",
+    name: "Spider Plant",
+    price: "$10",
+    distance: "4.5 km",
+    location: "Maplewood",
+    seller: "Leo",
+  },
+  {
+    image: "/placeholder.svg",
+    name: "Pothos",
+    price: "$9",
+    distance: "4 km",
+    location: "Riverside",
+    seller: "Sofia",
+  },
+  {
+    image: "/placeholder.svg",
+    name: "Cactus Mini",
+    price: "$6",
+    distance: "6 km",
+    location: "Hillcrest",
+    seller: "Amber",
+  },
+  {
+    image: "/placeholder.svg",
+    name: "Peace Lily",
+    price: "$11",
+    distance: "2.5 km",
+    location: "Sunnydale",
+    seller: "Maria",
+  },
+  {
+    image: "/placeholder.svg",
+    name: "ZZ Plant",
+    price: "$18",
+    distance: "7 km",
+    location: "Evergreen",
+    seller: "Noah",
+  },
+  {
+    image: "/placeholder.svg",
+    name: "Rubber Plant",
+    price: "$20",
+    distance: "1 km",
+    location: "Oakwood",
+    seller: "Jessica",
+  },
 ];
 
 export default function DashboardPlantList() {
@@ -38,3 +94,4 @@ export default function DashboardPlantList() {
     </div>
   );
 }
+
