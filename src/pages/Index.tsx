@@ -69,7 +69,7 @@ const Index = () => {
               id="search-plants"
               type="text"
               placeholder="Search for neighborhood plants..."
-              className="w-full rounded-2xl border border-green-300 pl-12 pr-4 py-4 text-xl bg-green-50/90 placeholder:text-green-400 shadow focus:ring-2 focus:ring-green-300 focus:outline-none transition"
+              className="w-full rounded-2xl border border-white/30 bg-white/20 backdrop-blur-md pl-12 pr-4 py-4 text-xl text-green-900 placeholder:text-green-900/50 shadow focus:ring-2 focus:ring-green-200 focus:outline-none transition"
               autoComplete="off"
             />
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400 w-7 h-7" />
