@@ -28,7 +28,7 @@ const Index = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center bg-gray-200 overflow-hidden">
+    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
       {/* BACKGROUND IMAGE */}
       <div
         className="absolute inset-0 -z-10"
@@ -46,7 +46,6 @@ const Index = () => {
               src={plant.image}
               alt={plant.name}
               className="w-20 h-20 rounded-full border-4 border-green-200 shadow-lg object-cover bg-green-50"
-              style={{ filter: "brightness(0.95)" }}
             />
             <span className="mt-2 text-white text-xs shadow text-center drop-shadow">{plant.name}</span>
           </div>
