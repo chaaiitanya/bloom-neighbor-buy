@@ -22,6 +22,7 @@ const favoritePlants = [
   },
 ];
 
+// Use the user's uploaded greenic plant background image
 const bgImage = "/lovable-uploads/57e20818-f97d-4a73-ba99-7f6eedf5d5f9.png";
 
 const plantTypes = [
@@ -53,15 +54,16 @@ const Index = () => {
       {/* DARK OVERLAY FOR TEXT READABILITY */}
       <div className="absolute inset-0 -z-10 bg-black/60" />
 
-      {/* Centered "Sproutsly" Heading */}
-      <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-20">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-green-100 text-center drop-shadow pointer-events-none select-none">
-          Sproutsly
-        </h1>
-      </div>
+      <main className="relative z-10 flex flex-col items-center w-full max-w-2xl mx-auto px-2 py-10">
 
-      {/* Main Page Content - padding-top set to create space for centered heading, which overlays */}
-      <main className="relative z-10 flex flex-col items-center w-full max-w-2xl mx-auto px-2 pt-32 pb-10">
+        {/* Welcome Section */}
+        <h1 className="text-3xl md:text-4xl font-extrabold text-green-100 mb-2 text-center drop-shadow">
+          Welcome to Sproutsly
+        </h1>
+        <div className="text-green-50 mb-8 text-lg text-center max-w-prose drop-shadow">
+          Discover & swap the favorite plants of your neighbourhood 🌱
+        </div>
+
         {/* Search Bar Section */}
         <form className="w-full mb-8" onSubmit={e => e.preventDefault()}>
           <div className="flex items-center gap-2 relative">
@@ -70,7 +72,7 @@ const Index = () => {
               id="search-plants"
               type="text"
               placeholder="Search for neighbourhood plants..."
-              className="w-full rounded-2xl border border-white/20 bg-black/80 backdrop-blur-xl pl-12 pr-4 py-4 text-xl text-green-100 placeholder:text-green-300/80 shadow focus:ring-2 focus:ring-green-200 focus:outline-none transition"
+              className="w-full rounded-2xl border border-white/20 bg-black/60 backdrop-blur-xl pl-12 pr-4 py-4 text-xl text-green-100 placeholder:text-green-300/80 shadow focus:ring-2 focus:ring-green-200 focus:outline-none transition"
               autoComplete="off"
             />
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-green-300 w-7 h-7" />
@@ -102,11 +104,28 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Ample Space */}
-        <div className="h-16" />
+        {/* --- Ample Space --- */}
+        <div className="h-12" />
 
-        {/* More Page Details */}
-        <div className="w-full max-w-md flex flex-col items-center">
+        {/* Favorite Plants Avatars */}
+        <div className="w-full flex flex-col items-center mb-10">
+          <h2 className="text-lg font-bold text-green-100 mb-4 text-center drop-shadow">Popular in your neighbourhood</h2>
+          <div className="flex gap-4 px-6 py-3 bg-emerald-200/10 border border-white/20 backdrop-blur-md rounded-2xl shadow-md">
+            {favoritePlants.map((plant, idx) => (
+              <div key={idx} className="flex flex-col items-center">
+                <img
+                  src={plant.image}
+                  alt={plant.name}
+                  className="w-16 h-16 rounded-full border-4 border-green-300 shadow object-cover bg-green-50"
+                />
+                <span className="mt-2 text-green-100 text-xs shadow text-center drop-shadow">{plant.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* --- More Page Details --- */}
+        <div className="w-full max-w-md mt-12 flex flex-col items-center">
           <h3 className="text-xl font-bold text-green-200 mb-3 tracking-wide drop-shadow">Why Sproutsly?</h3>
           <ul className="text-green-100 mb-4 text-base space-y-2">
             <li>🌿 Swap, give, or sell plants with neighbors easily</li>
@@ -126,23 +145,6 @@ const Index = () => {
           </div>
           <div className="text-green-200/70 mt-8 text-sm text-center">
             Sproutsly is about building a thriving, sharing, sustainable community, one plant at a time.🌱
-          </div>
-        </div>
-
-        {/* Favorite Plants Avatars */}
-        <div className="w-full flex flex-col items-center mt-14 mb-10">
-          <h2 className="text-lg font-bold text-green-100 mb-4 text-center drop-shadow">Popular in your neighbourhood</h2>
-          <div className="flex gap-4 px-6 py-3 bg-emerald-200/10 border border-white/20 backdrop-blur-md rounded-2xl shadow-md">
-            {favoritePlants.map((plant, idx) => (
-              <div key={idx} className="flex flex-col items-center">
-                <img
-                  src={plant.image}
-                  alt={plant.name}
-                  className="w-16 h-16 rounded-full border-4 border-green-300 shadow object-cover bg-green-50"
-                />
-                <span className="mt-2 text-green-100 text-xs shadow text-center drop-shadow">{plant.name}</span>
-              </div>
-            ))}
           </div>
         </div>
       </main>
