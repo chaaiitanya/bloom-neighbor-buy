@@ -133,10 +133,14 @@ export default function DashboardPlantList({
   search,
   range,
   filter,
+  minPrice,
+  maxPrice,
 }: {
   search?: string;
   range?: number;
   filter?: string;
+  minPrice?: string;
+  maxPrice?: string;
 }) {
   let filteredPlants = demoPlants;
 
@@ -157,6 +161,29 @@ export default function DashboardPlantList({
       plant.name.toLowerCase().includes(q) ||
       plant.location.toLowerCase().includes(q) ||
       plant.seller.toLowerCase().includes(q)
+    );
+  }
+
+  // Parse price from string, e.g. "$15" -> 15
+  function parsePrice(str: string) {
+    const match = str.match(/[\d.]+/);
+    if (!match) return 0;
+    return parseFloat(match[0]);
+  }
+
+  // Filter by minPrice
+  if (minPrice && !isNaN(Number(minPrice))) {
+    const min = Number(minPrice);
+    filteredPlants = filteredPlants.filter(
+      plant => parsePrice(plant.price) >= min
+    );
+  }
+
+  // Filter by maxPrice
+  if (maxPrice && !isNaN(Number(maxPrice))) {
+    const max = Number(maxPrice);
+    filteredPlants = filteredPlants.filter(
+      plant => parsePrice(plant.price) <= max
     );
   }
 
