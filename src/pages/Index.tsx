@@ -1,6 +1,5 @@
-
 import { useNavigate } from "react-router-dom";
-import { Search, LogIn } from "lucide-react";
+import { Search, LogIn, CheckCircle, MessageCircle, Leaf } from "lucide-react";
 
 const favoritePlants = [
   {
@@ -41,32 +40,17 @@ const Index = () => {
       {/* DARK OVERLAY FOR TEXT READABILITY */}
       <div className="fixed inset-0 -z-10 bg-black/40" />
 
-      {/* Top Avatars Bar (Header) */}
-      <header className="sticky top-0 z-20 w-full flex justify-center backdrop-blur-md">
-        <div className="flex gap-4 px-6 py-3 bg-emerald-200/30 border border-white/30 backdrop-blur-md rounded-b-2xl shadow-lg mt-0 max-w-lg w-full justify-center">
-          {favoritePlants.map((plant, idx) => (
-            <div key={idx} className="flex flex-col items-center">
-              <img
-                src={plant.image}
-                alt={plant.name}
-                className="w-20 h-20 rounded-full border-4 border-green-200 shadow-lg object-cover bg-green-50"
-              />
-              <span className="mt-2 text-white text-xs shadow text-center drop-shadow">{plant.name}</span>
-            </div>
-          ))}
-        </div>
-      </header>
-
-      {/* Main Scrollable Content */}
-      <main className="relative z-10 flex flex-col items-center w-full max-w-md mx-auto pt-40 sm:pt-52 p-4">
-        {/* Welcome */}
+      {/* Main Content */}
+      <main className="relative z-10 flex flex-col items-center w-full max-w-md mx-auto pt-12 p-4">
+        {/* Welcome & Hero Title */}
         <h1 className="text-3xl md:text-4xl font-extrabold text-green-100 mb-2 text-center drop-shadow">
           Welcome to Sproutsly
         </h1>
         <div className="text-green-50 mb-8 text-lg text-center max-w-prose drop-shadow">
           Discover & swap the favorite plants of your neighbourhood 🌱
         </div>
-        {/* Search Bar (glassmorphism, white) */}
+
+        {/* Search Bar */}
         <form className="w-full mb-6" onSubmit={e => e.preventDefault()}>
           <div className="relative">
             <input
@@ -79,9 +63,10 @@ const Index = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400 w-7 h-7" />
           </div>
         </form>
-        {/* Login Section with dark glassmorphism */}
-        <div className="w-full flex justify-center">
-          <div className="w-full flex justify-center bg-black/40 border border-white/30 backdrop-blur-md rounded-xl shadow-lg py-3">
+
+        {/* Login Bar (keeps dark glass style) */}
+        <div className="w-full flex justify-center mb-8">
+          <div className="w-full flex justify-center bg-black/60 border border-white/30 backdrop-blur-md rounded-xl shadow-lg py-3">
             <button
               className="flex items-center gap-2 text-white font-bold px-8 text-lg group transition"
               type="button"
@@ -92,10 +77,61 @@ const Index = () => {
             </button>
           </div>
         </div>
+
+        {/* Favorite Plants Avatars Section (moved down below login) */}
+        <section className="w-full flex justify-center mb-8">
+          <div className="flex gap-4 px-6 py-3 bg-emerald-200/25 border border-white/30 backdrop-blur-md rounded-2xl shadow-lg max-w-lg w-full justify-center">
+            {favoritePlants.map((plant, idx) => (
+              <div key={idx} className="flex flex-col items-center">
+                <img
+                  src={plant.image}
+                  alt={plant.name}
+                  className="w-20 h-20 rounded-full border-4 border-green-200 shadow-lg object-cover bg-green-50"
+                />
+                <span className="mt-2 text-white text-xs shadow text-center drop-shadow">{plant.name}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Feature Highlights */}
+        <section className="w-full max-w-lg bg-white/30 rounded-2xl p-5 mb-8 border border-white/30 backdrop-blur-md shadow">
+          <h2 className="text-green-900 font-bold text-xl mb-3 flex items-center gap-2">
+            <Leaf className="text-green-600 w-6 h-6" /> Why Sproutsly?
+          </h2>
+          <ul className="space-y-3 text-green-900 pl-1">
+            <li className="flex items-center gap-2">
+              <CheckCircle className="text-emerald-500 w-5 h-5" />
+              Connect with plant lovers in your area
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="text-emerald-500 w-5 h-5" />
+              Discover trending and seasonal plants nearby
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="text-emerald-500 w-5 h-5" />
+              List your own plants for swapping or sale
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="text-emerald-500 w-5 h-5" />
+              Chat securely with local gardeners
+            </li>
+          </ul>
+        </section>
+
+        {/* Call To Action / Info Note */}
+        <section className="w-full max-w-lg text-center mb-8 px-2">
+          <div className="inline-flex items-center gap-2 bg-emerald-100/70 text-emerald-800 px-5 py-3 rounded-xl font-semibold shadow">
+            <MessageCircle className="w-6 h-6" />
+            Join now and start growing your network!
+          </div>
+          <div className="mt-2 text-green-900/80 text-sm">
+            🌼 New: Browse, chat & share tips easily from any device.
+          </div>
+        </section>
       </main>
     </div>
   );
 };
 
 export default Index;
-
