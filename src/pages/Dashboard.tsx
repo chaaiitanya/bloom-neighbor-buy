@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,6 +6,7 @@ import DashboardLocationRange from "@/components/DashboardLocationRange";
 import DashboardFilters from "@/components/DashboardFilters";
 import DashboardPlantList from "@/components/DashboardPlantList";
 import DashboardProfileAvatar from "@/components/DashboardProfileAvatar";
+import DashboardFilterPopover from "@/components/DashboardFilterPopover";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -35,31 +35,16 @@ export default function Dashboard() {
         <div className="flex flex-col gap-4 px-0 sm:px-2 w-full">
           <DashboardSearchBar value={search} onChange={setSearch} />
           <div className="flex flex-col sm:flex-row gap-2 flex-wrap items-center justify-between">
-            <DashboardLocationRange value={range} onChange={setRange} />
             <DashboardFilters value={filter} onChange={setFilter} />
-            {/* Price Filter Inputs */}
-            <div className="flex flex-row items-center gap-2 rounded-xl px-3 bg-[#f4fdf7] border border-[#d3f4dc] h-[46px]">
-              <span className="text-green-700 font-semibold text-base mr-2">Price:</span>
-              <input
-                type="number"
-                min={0}
-                placeholder="Min"
-                value={minPrice}
-                className="w-16 h-8 px-2 rounded bg-white border border-green-100 text-green-900 focus:outline-none focus:ring-1 focus:ring-green-200 font-semibold placeholder:text-green-400 mr-1"
-                style={{ boxShadow: "0 1px 0 0 #e8f8ef" }}
-                onChange={e => setMinPrice(e.target.value)}
-              />
-              <span className="text-gray-400 text-base mx-1">-</span>
-              <input
-                type="number"
-                min={0}
-                placeholder="Max"
-                value={maxPrice}
-                className="w-16 h-8 px-2 rounded bg-white border border-green-100 text-green-900 focus:outline-none focus:ring-1 focus:ring-green-200 font-semibold placeholder:text-green-400 ml-1"
-                style={{ boxShadow: "0 1px 0 0 #e8f8ef" }}
-                onChange={e => setMaxPrice(e.target.value)}
-              />
-            </div>
+            {/* Filter Popover (Range + Price) */}
+            <DashboardFilterPopover
+              range={range}
+              setRange={setRange}
+              minPrice={minPrice}
+              setMinPrice={setMinPrice}
+              maxPrice={maxPrice}
+              setMaxPrice={setMaxPrice}
+            />
           </div>
         </div>
         <div className="mt-7 px-0 sm:px-2 w-full">
