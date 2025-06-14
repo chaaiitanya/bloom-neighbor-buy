@@ -1,7 +1,9 @@
+
 import { useNavigate } from "react-router-dom";
 import { Search, LogIn } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import clsx from "clsx";
+import { supabase } from "@/integrations/supabase/client";
 
 // --- Favorite Plants ---
 const favoritePlants = [
@@ -64,6 +66,15 @@ const Index = () => {
   const [plantType, setPlantType] = useState("All");
   const [headerVisible, setHeaderVisible] = useState(false);
   const welcomeRef = useRef<HTMLDivElement>(null);
+
+  // Redirect to dashboard if logged in
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        navigate("/dashboard", { replace: true });
+      }
+    });
+  }, [navigate]);
 
   // Show glass header when welcome section is out of viewport
   useEffect(() => {
@@ -222,3 +233,4 @@ const Index = () => {
 };
 
 export default Index;
+
