@@ -36,7 +36,7 @@ const Index = () => {
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-green-900/60 via-white/70 to-green-300/60 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 via-white/40 to-green-200/20" />
       </div>
       {/* Favorite Plants (Avatars) */}
       <div className="absolute top-12 left-1/2 -translate-x-1/2 flex gap-4 z-0">
