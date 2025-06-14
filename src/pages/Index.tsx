@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { Search, LogIn } from "lucide-react";
 
@@ -20,7 +21,8 @@ const favoritePlants = [
   },
 ];
 
-const bgImage = "https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=1200&q=80";
+// Use a dark image from Unsplash (starry night sky)
+const bgImage = "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=1200&q=80";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -35,9 +37,7 @@ const Index = () => {
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 via-white/40 to-green-200/20" />
-      </div>
+      />
       {/* Favorite Plants (Avatars) */}
       <div className="absolute top-12 left-1/2 -translate-x-1/2 flex gap-4 z-0">
         {favoritePlants.map((plant, idx) => (
