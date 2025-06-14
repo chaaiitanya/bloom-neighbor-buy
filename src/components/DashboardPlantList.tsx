@@ -1,5 +1,6 @@
-
 import { PlantCard } from "@/components/PlantCard";
+import PlantDetailDrawer from "@/components/PlantDetailDrawer";
+import { useState } from "react";
 
 const demoPlants = [
   {
@@ -142,6 +143,9 @@ export default function DashboardPlantList({
   minPrice?: string;
   maxPrice?: string;
 }) {
+  // State for plant details drawer
+  const [selectedPlant, setSelectedPlant] = useState<any | null>(null);
+
   let filteredPlants = demoPlants;
 
   // Filter by range (distance in km)
@@ -188,14 +192,23 @@ export default function DashboardPlantList({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 w-full mt-4 transition-all">
-      {filteredPlants.length === 0 ? (
-        <div className="text-center text-green-700 col-span-full py-8">No plants match your search.</div>
-      ) : (
-        filteredPlants.map((plant, i) => (
-          <PlantCard key={i} {...plant} />
-        ))
-      )}
-    </div>
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 w-full mt-4 transition-all">
+        {filteredPlants.length === 0 ? (
+          <div className="text-center text-green-700 col-span-full py-8">No plants match your search.</div>
+        ) : (
+          filteredPlants.map((plant, i) => (
+            <PlantCard key={i} {...plant} onClick={() => setSelectedPlant(plant)} />
+          ))
+        )}
+      </div>
+      <PlantDetailDrawer
+        open={!!selectedPlant}
+        plant={selectedPlant}
+        onClose={() => setSelectedPlant(null)}
+      />
+    </>
   );
 }
+
+// NOTE: File is getting long (over 200 lines), consider refactoring into smaller files for readability and maintainability.
