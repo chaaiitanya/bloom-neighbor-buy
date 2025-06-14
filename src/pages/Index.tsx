@@ -41,9 +41,9 @@ const Index = () => {
       {/* DARK OVERLAY FOR TEXT READABILITY */}
       <div className="absolute inset-0 -z-10 bg-black/40" />
       
-      {/* Favorite Plants (Avatars) with glass effect */}
+      {/* Favorite Plants (Avatars) with green glass effect */}
       <div className="absolute top-12 left-1/2 -translate-x-1/2 z-0 w-fit">
-        <div className="flex gap-4 px-6 py-3 bg-white/20 border border-white/30 backdrop-blur-md rounded-2xl shadow-lg">
+        <div className="flex gap-4 px-6 py-3 bg-emerald-200/30 border border-white/30 backdrop-blur-md rounded-2xl shadow-lg">
           {favoritePlants.map((plant, idx) => (
             <div key={idx} className="flex flex-col items-center">
               <img
@@ -65,7 +65,7 @@ const Index = () => {
         <div className="text-green-50 mb-8 text-lg text-center max-w-prose drop-shadow">
           Discover & swap the favorite plants of your neighbourhood 🌱
         </div>
-        {/* Search Bar (glassmorphism) */}
+        {/* Search Bar (glassmorphism, white) */}
         <form className="w-full mb-6" onSubmit={e => e.preventDefault()}>
           <div className="relative">
             <input
@@ -78,9 +78,9 @@ const Index = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400 w-7 h-7" />
           </div>
         </form>
-        {/* Login Section with glassmorphism */}
+        {/* Login Section with neutral glassmorphism */}
         <div className="w-full flex justify-center">
-          <div className="w-full flex justify-center bg-white/20 border border-white/30 backdrop-blur-md rounded-xl shadow-lg py-3">
+          <div className="w-full flex justify-center bg-slate-200/20 border border-white/30 backdrop-blur-md rounded-xl shadow-lg py-3">
             <button
               className="flex items-center gap-2 text-white font-bold px-8 text-lg group transition"
               type="button"
