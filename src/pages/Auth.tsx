@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,6 +61,8 @@ export default function Auth() {
           title: "Welcome back!",
           description: "Successfully logged in.",
         });
+        // Redirect to dashboard after successful login
+        navigate("/dashboard", { replace: true });
       }
     } else {
       // Signup mode (with emailRedirectTo as required for Supabase)
