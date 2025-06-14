@@ -1,13 +1,13 @@
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardSearchBar from "@/components/DashboardSearchBar";
 import DashboardLocationRange from "@/components/DashboardLocationRange";
 import DashboardFilters from "@/components/DashboardFilters";
 import DashboardPlantList from "@/components/DashboardPlantList";
-import { useState } from "react";
+import { Character } from "lucide-react";
 
-// A simple React dashboard component only for logged-in users.
 export default function Dashboard() {
   const navigate = useNavigate();
 
@@ -27,6 +27,13 @@ export default function Dashboard() {
   return (
     <main className="min-h-screen flex flex-col items-center bg-gradient-to-br from-green-50 to-white px-2 pb-10">
       <div className="w-full max-w-2xl mt-6">
+        {/* Character Icon */}
+        <div className="flex justify-center mb-4">
+          <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center shadow-md border-[3px] border-green-300">
+            <Character className="w-10 h-10 text-green-600" strokeWidth={2.5} />
+          </div>
+        </div>
+
         <div className="flex flex-col gap-4 px-2">
           <DashboardSearchBar value={search} onChange={setSearch} />
           <div className="flex gap-2 flex-wrap items-center justify-between">
