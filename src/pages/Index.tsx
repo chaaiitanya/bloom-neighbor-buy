@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { Search, LogIn } from "lucide-react";
 
@@ -21,8 +20,8 @@ const favoritePlants = [
   },
 ];
 
-// Use a dark image from Unsplash (starry night sky)
-const bgImage = "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?auto=format&fit=crop&w=1200&q=80";
+// Use a green, calm image from Unsplash (sun light through green trees)
+const bgImage = "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1200&q=80";
 
 const Index = () => {
   const navigate = useNavigate();
