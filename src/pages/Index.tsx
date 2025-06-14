@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { Search, LogIn } from "lucide-react";
 
@@ -21,7 +20,7 @@ const favoritePlants = [
   },
 ];
 
-const bgImage = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80";
+const bgImage = "https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=1200&q=80";
 
 const Index = () => {
   const navigate = useNavigate();
