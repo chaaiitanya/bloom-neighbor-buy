@@ -1,9 +1,9 @@
-
 import { useNavigate } from "react-router-dom";
 import { Search, LogIn } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import clsx from "clsx";
 import { supabase } from "@/integrations/supabase/client";
+import BottomTabNav from "@/components/BottomTabNav";
 
 // --- Favorite Plants ---
 const favoritePlants = [
@@ -228,9 +228,11 @@ const Index = () => {
           </div>
         </div>
       </main>
+
+      {/* Add BottomTabNav footer for consistency across pages */}
+      <BottomTabNav />
     </div>
   );
 };
 
 export default Index;
-
