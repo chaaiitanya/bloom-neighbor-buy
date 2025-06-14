@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,7 +38,7 @@ export default function Dashboard() {
             <DashboardFilters value={filter} onChange={setFilter} />
           </div>
         </div>
-        <div className="mt-7 px-0 sm:px-2 max-w-5xl w-full mx-auto">
+        <div className="mt-7 px-0 sm:px-2 w-full">
           <h2 className="text-lg font-bold text-green-800 mb-3">🌿 Best in your area</h2>
           <DashboardPlantList />
         </div>
