@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { Search, LogIn } from "lucide-react";
 
@@ -80,7 +79,7 @@ const Index = () => {
         </form>
         {/* Login Section with neutral glassmorphism */}
         <div className="w-full flex justify-center">
-          <div className="w-full flex justify-center bg-slate-200/20 border border-white/30 backdrop-blur-md rounded-xl shadow-lg py-3">
+          <div className="w-full flex justify-center bg-black/40 border border-white/30 backdrop-blur-md rounded-xl shadow-lg py-3">
             <button
               className="flex items-center gap-2 text-white font-bold px-8 text-lg group transition"
               type="button"
@@ -97,4 +96,3 @@ const Index = () => {
 };
 
 export default Index;
-
