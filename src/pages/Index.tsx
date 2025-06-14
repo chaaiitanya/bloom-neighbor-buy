@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { Search, LogIn } from "lucide-react";
 
@@ -27,10 +28,10 @@ const Index = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+    <div className="relative min-h-screen flex flex-col items-center overflow-hidden">
       {/* BACKGROUND IMAGE */}
       <div
-        className="absolute inset-0 -z-10"
+        className="fixed inset-0 -z-20"
         style={{
           backgroundImage: `url(${bgImage})`,
           backgroundSize: "cover",
@@ -38,11 +39,11 @@ const Index = () => {
         }}
       />
       {/* DARK OVERLAY FOR TEXT READABILITY */}
-      <div className="absolute inset-0 -z-10 bg-black/40" />
-      
-      {/* Favorite Plants (Avatars) with green glass effect */}
-      <div className="absolute top-12 left-1/2 -translate-x-1/2 z-0 w-fit">
-        <div className="flex gap-4 px-6 py-3 bg-emerald-200/30 border border-white/30 backdrop-blur-md rounded-2xl shadow-lg">
+      <div className="fixed inset-0 -z-10 bg-black/40" />
+
+      {/* Top Avatars Bar (Header) */}
+      <header className="sticky top-0 z-20 w-full flex justify-center backdrop-blur-md">
+        <div className="flex gap-4 px-6 py-3 bg-emerald-200/30 border border-white/30 backdrop-blur-md rounded-b-2xl shadow-lg mt-0 max-w-lg w-full justify-center">
           {favoritePlants.map((plant, idx) => (
             <div key={idx} className="flex flex-col items-center">
               <img
@@ -54,9 +55,10 @@ const Index = () => {
             </div>
           ))}
         </div>
-      </div>
-      {/* MAIN CONTENT */}
-      <div className="relative z-10 flex flex-col items-center w-full max-w-md mt-40 sm:mt-52 p-4">
+      </header>
+
+      {/* Main Scrollable Content */}
+      <main className="relative z-10 flex flex-col items-center w-full max-w-md mx-auto pt-40 sm:pt-52 p-4">
         {/* Welcome */}
         <h1 className="text-3xl md:text-4xl font-extrabold text-green-100 mb-2 text-center drop-shadow">
           Welcome to Sproutsly
@@ -77,7 +79,7 @@ const Index = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400 w-7 h-7" />
           </div>
         </form>
-        {/* Login Section with neutral glassmorphism */}
+        {/* Login Section with dark glassmorphism */}
         <div className="w-full flex justify-center">
           <div className="w-full flex justify-center bg-black/40 border border-white/30 backdrop-blur-md rounded-xl shadow-lg py-3">
             <button
@@ -90,9 +92,10 @@ const Index = () => {
             </button>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
 
 export default Index;
+
