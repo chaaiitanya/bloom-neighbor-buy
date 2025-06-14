@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,9 +35,9 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-col gap-4 px-0 sm:px-2 w-full">
           <DashboardSearchBar value={search} onChange={setSearch} />
-          <div className="flex flex-col sm:flex-row gap-2 flex-wrap items-center justify-between">
-            <DashboardFilters value={filter} onChange={setFilter} />
-            {/* Filter Popover (Range + Price) */}
+          {/* Category filters row */}
+          <div className="flex flex-col sm:flex-row items-center gap-2 flex-wrap w-full">
+            {/* Filter Popover (Range + Price) moved to the start */}
             <DashboardFilterPopover
               range={range}
               setRange={setRange}
@@ -45,6 +46,9 @@ export default function Dashboard() {
               maxPrice={maxPrice}
               setMaxPrice={setMaxPrice}
             />
+            <div className="flex-1 w-full">
+              <DashboardFilters value={filter} onChange={setFilter} />
+            </div>
           </div>
         </div>
         <div className="mt-7 px-0 sm:px-2 w-full">
