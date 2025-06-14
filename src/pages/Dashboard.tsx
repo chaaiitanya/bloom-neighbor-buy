@@ -6,7 +6,7 @@ import DashboardSearchBar from "@/components/DashboardSearchBar";
 import DashboardLocationRange from "@/components/DashboardLocationRange";
 import DashboardFilters from "@/components/DashboardFilters";
 import DashboardPlantList from "@/components/DashboardPlantList";
-import { Character } from "lucide-react";
+import { UserCircle } from "lucide-react";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export default function Dashboard() {
         {/* Character Icon */}
         <div className="flex justify-center mb-4">
           <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center shadow-md border-[3px] border-green-300">
-            <Character className="w-10 h-10 text-green-600" strokeWidth={2.5} />
+            <UserCircle className="w-10 h-10 text-green-600" strokeWidth={2.5} />
           </div>
         </div>
 
