@@ -1,7 +1,9 @@
-
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerClose } from "@/components/ui/drawer";
 import { MapPin } from "lucide-react";
 import { ProfilePreview } from "@/components/ProfilePreview";
+import ChatBox from "./ChatBox";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 type Plant = {
   image: string;
@@ -10,6 +12,7 @@ type Plant = {
   distance: string;
   location: string;
   seller: string;
+  sellerId?: string;
   sellerAvatar?: string;
   sellerRating?: number;
   sellerSales?: number;
@@ -24,7 +27,26 @@ interface PlantDetailDrawerProps {
 }
 
 export default function PlantDetailDrawer({ open, plant, onClose }: PlantDetailDrawerProps) {
+  const [showChat, setShowChat] = useState(false);
+  const [myUserId, setMyUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Get current user id
+    supabase.auth.getUser().then(({ data, error }) => {
+      if (data?.user?.id) setMyUserId(data.user.id);
+      else setMyUserId(null);
+    });
+  }, []);
+
+  // Hide chat when drawer closes or plant changes
+  useEffect(() => {
+    setShowChat(false);
+  }, [open, plant]);
+
   if (!plant) return null;
+
+  // Don't show "Message Seller" if I'm the seller
+  const canChat = plant.sellerId && myUserId && myUserId !== plant.sellerId;
 
   return (
     <Drawer open={open} onOpenChange={v => { if (!v) onClose(); }}>
@@ -63,9 +85,28 @@ export default function PlantDetailDrawer({ open, plant, onClose }: PlantDetailD
               sales={plant.sellerSales ?? 22}
             />
           </div>
+          {/* Message Seller Button + Chat */}
+          {canChat && !showChat && (
+            <div className="mt-5 flex justify-center">
+              <button
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-xl shadow"
+                onClick={() => setShowChat(true)}
+              >
+                Message Seller
+              </button>
+            </div>
+          )}
+          {canChat && showChat && plant.sellerId && myUserId && (
+            <div className="mt-5">
+              <ChatBox
+                otherUserId={plant.sellerId}
+                myUserId={myUserId}
+                onClose={() => setShowChat(false)}
+              />
+            </div>
+          )}
         </div>
       </DrawerContent>
     </Drawer>
   );
 }
-

@@ -9,7 +9,59 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      private_chats: {
+        Row: {
+          created_at: string
+          id: string
+          participant_a: string
+          participant_b: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          participant_a: string
+          participant_b: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          participant_a?: string
+          participant_b?: string
+        }
+        Relationships: []
+      }
+      private_messages: {
+        Row: {
+          chat_id: string
+          content: string
+          id: string
+          sender_id: string
+          sent_at: string
+        }
+        Insert: {
+          chat_id: string
+          content: string
+          id?: string
+          sender_id: string
+          sent_at?: string
+        }
+        Update: {
+          chat_id?: string
+          content?: string
+          id?: string
+          sender_id?: string
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "private_messages_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "private_chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
