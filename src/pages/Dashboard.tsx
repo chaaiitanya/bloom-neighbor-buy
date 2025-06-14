@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -30,8 +31,7 @@ export default function Dashboard() {
         <div className="flex justify-start">
           <DashboardProfileAvatar />
         </div>
-
-        <div className="flex flex-col gap-4 px-0 sm:px-2 max-w-5xl w-full mx-auto">
+        <div className="flex flex-col gap-4 px-0 sm:px-2 w-full">
           <DashboardSearchBar value={search} onChange={setSearch} />
           <div className="flex flex-col sm:flex-row gap-2 flex-wrap items-center justify-between">
             <DashboardLocationRange value={range} onChange={setRange} />
@@ -40,7 +40,7 @@ export default function Dashboard() {
         </div>
         <div className="mt-7 px-0 sm:px-2 w-full">
           <h2 className="text-lg font-bold text-green-800 mb-3">🌿 Best in your area</h2>
-          <DashboardPlantList />
+          <DashboardPlantList search={search} range={range} filter={filter} />
         </div>
         <div className="w-full flex justify-center mt-12">
           {/* Placeholder for Post Plant call-to-action */}

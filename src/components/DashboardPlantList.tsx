@@ -1,7 +1,6 @@
 
 import { PlantCard } from "@/components/PlantCard";
 
-// Demo data for now
 const demoPlants = [
   {
     image: "/placeholder.svg",
@@ -10,6 +9,7 @@ const demoPlants = [
     distance: "2 km",
     location: "Sunnydale",
     seller: "Maria",
+    type: "indoor",
   },
   {
     image: "/placeholder.svg",
@@ -18,6 +18,7 @@ const demoPlants = [
     distance: "5 km",
     location: "Greenfield",
     seller: "James",
+    type: "indoor",
   },
   {
     image: "/placeholder.svg",
@@ -26,6 +27,7 @@ const demoPlants = [
     distance: "1.5 km",
     location: "Oakwood",
     seller: "Jessica",
+    type: "indoor",
   },
   {
     image: "/placeholder.svg",
@@ -34,6 +36,7 @@ const demoPlants = [
     distance: "3 km",
     location: "Midtown",
     seller: "Olivia",
+    type: "succulent",
   },
   {
     image: "/placeholder.svg",
@@ -42,6 +45,7 @@ const demoPlants = [
     distance: "4.5 km",
     location: "Maplewood",
     seller: "Leo",
+    type: "indoor",
   },
   {
     image: "/placeholder.svg",
@@ -50,6 +54,7 @@ const demoPlants = [
     distance: "4 km",
     location: "Riverside",
     seller: "Sofia",
+    type: "indoor",
   },
   {
     image: "/placeholder.svg",
@@ -58,6 +63,7 @@ const demoPlants = [
     distance: "6 km",
     location: "Hillcrest",
     seller: "Amber",
+    type: "succulent",
   },
   {
     image: "/placeholder.svg",
@@ -66,6 +72,7 @@ const demoPlants = [
     distance: "2.5 km",
     location: "Sunnydale",
     seller: "Maria",
+    type: "flower",
   },
   {
     image: "/placeholder.svg",
@@ -74,6 +81,7 @@ const demoPlants = [
     distance: "7 km",
     location: "Evergreen",
     seller: "Noah",
+    type: "indoor",
   },
   {
     image: "/placeholder.svg",
@@ -82,16 +90,85 @@ const demoPlants = [
     distance: "1 km",
     location: "Oakwood",
     seller: "Jessica",
+    type: "indoor",
+  },
+  // Extra sample data for a longer list
+  {
+    image: "/placeholder.svg",
+    name: "Outdoor Bonsai",
+    price: "$22",
+    distance: "8 km",
+    location: "Garden Oaks",
+    seller: "Daniel",
+    type: "outdoor",
+  },
+  {
+    image: "/placeholder.svg",
+    name: "Daisy",
+    price: "$5",
+    distance: "12 km",
+    location: "Meadow Lane",
+    seller: "Emma",
+    type: "flower",
+  },
+  {
+    image: "/placeholder.svg",
+    name: "Succulent Mix",
+    price: "$14",
+    distance: "10 km",
+    location: "Brookfield",
+    seller: "Leo",
+    type: "succulent",
   },
 ];
 
-export default function DashboardPlantList() {
+function parseDistance(str: string) {
+  // expects something like "2 km"
+  const match = str.match(/^([\d.]+)\s*km$/i);
+  if (!match) return Infinity;
+  return parseFloat(match[1]);
+}
+
+export default function DashboardPlantList({
+  search,
+  range,
+  filter,
+}: {
+  search?: string;
+  range?: number;
+  filter?: string;
+}) {
+  let filteredPlants = demoPlants;
+
+  // Filter by range (distance in km)
+  if (typeof range === "number" && !isNaN(range)) {
+    filteredPlants = filteredPlants.filter(plant => parseDistance(plant.distance) <= range);
+  }
+
+  // Filter by type (filter)
+  if (filter && filter !== "all") {
+    filteredPlants = filteredPlants.filter(plant => plant.type === filter);
+  }
+
+  // Filter by search: name, location, or seller (case-insensitive)
+  if (search && search.trim()) {
+    const q = search.trim().toLowerCase();
+    filteredPlants = filteredPlants.filter(plant =>
+      plant.name.toLowerCase().includes(q) ||
+      plant.location.toLowerCase().includes(q) ||
+      plant.seller.toLowerCase().includes(q)
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 w-full mt-4 transition-all">
-      {demoPlants.map((plant, i) => (
-        <PlantCard key={i} {...plant} />
-      ))}
+      {filteredPlants.length === 0 ? (
+        <div className="text-center text-green-700 col-span-full py-8">No plants match your search.</div>
+      ) : (
+        filteredPlants.map((plant, i) => (
+          <PlantCard key={i} {...plant} />
+        ))
+      )}
     </div>
   );
 }
-
