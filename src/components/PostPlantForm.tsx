@@ -5,7 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 
-export default function PostPlantForm() {
+type PostPlantFormProps = {
+  afterPost?: () => void;
+};
+
+export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
@@ -68,9 +72,13 @@ export default function PostPlantForm() {
         title: "Plant posted!",
         description: "Your plant is now listed.",
       });
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 800);
+      if (afterPost) {
+        afterPost();
+      } else {
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 800);
+      }
     }
     setSubmitting(false);
   };
