@@ -25,21 +25,21 @@ export default function Dashboard() {
   const [filter, setFilter] = useState("all");
 
   return (
-    <main className="min-h-screen flex flex-col items-center bg-gradient-to-br from-green-50 to-white px-2 pb-10">
-      <div className="w-full max-w-2xl mt-6">
+    <main className="min-h-screen flex flex-col items-center bg-gradient-to-br from-green-50 to-white px-2 sm:px-4 lg:px-12 pb-10">
+      <div className="w-full flex flex-col gap-4 mt-6">
         {/* Profile Avatar at top-left */}
         <div className="flex justify-start">
           <DashboardProfileAvatar />
         </div>
 
-        <div className="flex flex-col gap-4 px-2">
+        <div className="flex flex-col gap-4 px-0 sm:px-2 max-w-5xl w-full mx-auto">
           <DashboardSearchBar value={search} onChange={setSearch} />
-          <div className="flex gap-2 flex-wrap items-center justify-between">
+          <div className="flex flex-col sm:flex-row gap-2 flex-wrap items-center justify-between">
             <DashboardLocationRange value={range} onChange={setRange} />
             <DashboardFilters value={filter} onChange={setFilter} />
           </div>
         </div>
-        <div className="mt-7 px-2">
+        <div className="mt-7 px-0 sm:px-2 max-w-5xl w-full mx-auto">
           <h2 className="text-lg font-bold text-green-800 mb-3">🌿 Best in your area</h2>
           <DashboardPlantList />
         </div>
