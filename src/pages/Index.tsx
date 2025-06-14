@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { Search, LogIn } from "lucide-react";
 
@@ -20,8 +21,8 @@ const favoritePlants = [
   },
 ];
 
-// Use a green, calm image from Unsplash (sun light through green trees)
-const bgImage = "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1200&q=80";
+// Use the user's uploaded greenic plant background image
+const bgImage = "/lovable-uploads/57e20818-f97d-4a73-ba99-7f6eedf5d5f9.png";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -37,6 +38,8 @@ const Index = () => {
           backgroundPosition: "center",
         }}
       />
+      {/* DARK OVERLAY FOR TEXT READABILITY */}
+      <div className="absolute inset-0 -z-10 bg-black/40" />
       {/* Favorite Plants (Avatars) */}
       <div className="absolute top-12 left-1/2 -translate-x-1/2 flex gap-4 z-0">
         {favoritePlants.map((plant, idx) => (
@@ -53,10 +56,10 @@ const Index = () => {
       {/* MAIN CONTENT */}
       <div className="relative z-10 flex flex-col items-center w-full max-w-md mt-40 sm:mt-52 p-4">
         {/* Welcome */}
-        <h1 className="text-3xl md:text-4xl font-extrabold text-green-900 mb-2 text-center drop-shadow">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-green-100 mb-2 text-center drop-shadow">
           Welcome to Sproutsly
         </h1>
-        <div className="text-green-800 mb-8 text-lg text-center max-w-prose">
+        <div className="text-green-50 mb-8 text-lg text-center max-w-prose drop-shadow">
           Discover & swap the favorite plants of your neighbourhood 🌱
         </div>
         {/* BIG Search Bar */}
@@ -89,3 +92,4 @@ const Index = () => {
 };
 
 export default Index;
+
