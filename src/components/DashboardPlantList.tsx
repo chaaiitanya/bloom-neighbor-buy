@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { parseDistance, parsePrice } from "@/components/dashboard-plant-helpers";
@@ -140,6 +139,7 @@ export default function DashboardPlantList({
       image: plant.photo_url ?? "/placeholder.svg",
       price: `$${plant.price}`,
       distance: plant.distance ?? "—",
+      type: plant.type ?? "all" // Ensure 'type' is always set and required
     }));
 
   // Loading & error handling
