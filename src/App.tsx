@@ -10,7 +10,6 @@ import Chat from "./pages/Chat";
 import Post from "./pages/Post";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
-import Community from "./pages/Community";
 
 const queryClient = new QueryClient();
 
