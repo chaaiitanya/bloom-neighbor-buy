@@ -58,7 +58,7 @@ export default function Profile() {
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-100 to-white dark:from-[#181f1a] dark:to-[#232a26]/80 pb-24 transition-colors">
       <div className="w-full max-w-xl mx-auto px-3 sm:px-0 mt-4">
         {/* Card container for profile */}
-        <div className="relative rounded-3xl shadow-xl bg-white/75 dark:bg-[#21271f]/80 border border-green-100 dark:border-[#223128] ring-1 ring-green-100 p-6 flex flex-col items-center mb-6 animate-fade-in transition-colors">
+        <div className="relative rounded-3xl shadow-xl bg-white/75 dark:bg-[#161c17]/95 border border-green-100 dark:border-[#223128] ring-1 ring-green-100 dark:ring-[#223128] p-6 flex flex-col items-center mb-6 animate-fade-in transition-colors">
           {loading ? (
             <div className="mb-2 h-12 w-32 rounded-full bg-green-100 dark:bg-[#232a26]/60 animate-pulse" />
           ) : (
@@ -83,7 +83,7 @@ export default function Profile() {
           </div>
           <ProfileSocialLinks />
           {editMode && (
-            <div className="w-full bg-white dark:bg-[#181f1a]/85 rounded-2xl p-4 border border-green-100 dark:border-[#223128] shadow mt-5 transition-colors">
+            <div className="w-full bg-white dark:bg-[#181f1a]/90 rounded-2xl p-4 border border-green-100 dark:border-[#223128] shadow mt-5 transition-colors">
               <ProfileEditForm onUpdated={handleProfileUpdated} />
             </div>
           )}
@@ -95,17 +95,14 @@ export default function Profile() {
             <div className="mb-6 animate-fade-in">
               <ProfileListings />
             </div>
-
             {/* Favorites */}
-            <div className="w-full rounded-2xl p-4 border border-green-100 dark:border-[#223128] bg-green-50/70 dark:bg-[#232a26]/85 shadow mb-4 animate-fade-in transition-colors">
+            <div className="w-full rounded-2xl p-4 border border-green-100 dark:border-[#223128] bg-green-50/70 dark:bg-[#181f1a]/80 shadow mb-4 animate-fade-in transition-colors">
               <ProfileFavorites />
             </div>
-            
             {/* Action bar list */}
             <div className="w-full max-w-md mx-auto">
               <ProfileActionBar />
             </div>
-
             {/* QR Share */}
             <div className="w-full flex flex-col items-center mt-8 animate-fade-in">
               <ProfileQrShare />

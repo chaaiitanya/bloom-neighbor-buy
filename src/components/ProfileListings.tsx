@@ -36,19 +36,19 @@ export default function ProfileListings() {
 
   return (
     <div className="my-4">
-      <h3 className="text-green-900 font-bold text-lg mb-2">My Listings</h3>
+      <h3 className="text-green-900 dark:text-green-100 font-bold text-lg mb-2">My Listings</h3>
       {loading ? (
-        <div className="flex items-center justify-center py-8 text-green-700">
+        <div className="flex items-center justify-center py-8 text-green-700 dark:text-green-300">
           <Loader2 className="animate-spin mr-2" />
           Loading...
         </div>
       ) : plants.length === 0 ? (
-        <div className="text-center text-green-700 py-8">No listings posted yet.</div>
+        <div className="text-center text-green-700 dark:text-green-200 py-8">No listings posted yet.</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {plants.map(plant => (
-            <Card key={plant.id} className="flex flex-col">
-              <div className="h-40 w-full bg-green-50 rounded-lg mb-2 overflow-hidden flex items-center justify-center">
+            <Card key={plant.id} className="flex flex-col bg-white/75 dark:bg-[#181f1a]/85 border border-green-100 dark:border-[#223128] transition-colors shadow">
+              <div className="h-40 w-full bg-green-50 dark:bg-[#232a26] rounded-lg mb-2 overflow-hidden flex items-center justify-center">
                 {plant.photo_url ? (
                   <img
                     src={plant.photo_url}
@@ -60,10 +60,10 @@ export default function ProfileListings() {
                 )}
               </div>
               <div className="flex-1 px-2 pb-3">
-                <div className="font-semibold text-green-800">{plant.name}</div>
-                <div className="text-green-700 mb-1">${plant.price}</div>
+                <div className="font-semibold text-green-800 dark:text-green-100">{plant.name}</div>
+                <div className="text-green-700 dark:text-green-300 mb-1">${plant.price}</div>
                 {plant.location && (
-                  <div className="text-xs text-gray-400">{plant.location}</div>
+                  <div className="text-xs text-gray-400 dark:text-gray-200">{plant.location}</div>
                 )}
               </div>
             </Card>

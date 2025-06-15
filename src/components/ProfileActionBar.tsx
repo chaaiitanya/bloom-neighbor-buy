@@ -45,18 +45,18 @@ export default function ProfileActionBar() {
   };
 
   return (
-    <ul className="w-full flex flex-col gap-3 shadow-lg rounded-2xl bg-white border border-green-100 py-3 px-2 animate-fade-in">
+    <ul className="w-full flex flex-col gap-3 shadow-lg rounded-2xl bg-white dark:bg-[#161c17]/95 border border-green-100 dark:border-[#223128] py-3 px-2 animate-fade-in transition-colors">
       {MENU.map((item) => (
         <li key={item.label}>
           <button
             onClick={() => navigate(item.route)}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-green-50 group transition text-green-800 font-medium focus:outline-none focus:ring-2 focus:ring-green-200"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-green-50 dark:hover:bg-[#223128]/80 group transition text-green-800 dark:text-green-100 font-medium focus:outline-none focus:ring-2 focus:ring-green-200 dark:focus:ring-green-800"
             aria-label={item.label}
           >
             <span className="mr-2">
               {item.icon}
             </span>
-            <span className="text-base group-hover:text-green-700 transition">
+            <span className="text-base group-hover:text-green-700 dark:group-hover:text-green-300 transition">
               {item.label}
             </span>
           </button>
@@ -65,7 +65,7 @@ export default function ProfileActionBar() {
       <li>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 transition text-red-700 font-semibold border-t border-green-100 mt-1 focus:outline-none focus:ring-2 focus:ring-red-200"
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 dark:hover:bg-[#232a26]/80 transition text-red-700 dark:text-red-400 font-semibold border-t border-green-100 dark:border-[#223128] mt-1 focus:outline-none focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900"
         >
           <LogOut className="w-5 h-5" />
           <span className="text-base">Log out</span>
