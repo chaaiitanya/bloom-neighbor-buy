@@ -120,7 +120,7 @@ const Index = () => {
       <div className="relative z-10 w-full max-w-md mx-auto flex flex-col justify-center items-center min-h-[94vh]">
         <div className="w-full rounded-3xl shadow-2xl px-8 pt-10 pb-6 flex flex-col items-center"
           style={{
-            background: "rgba(255,255,255,0.19)", // Slightly more opaque for text contrast
+            background: "rgba(255,255,255,0.32)", // Increased opacity for max contrast
             border: "2px solid rgba(255,255,255,0.22)",
             boxShadow:
               "0 4px 36px 0 rgba(52,89,68,0.08), 0 2px 14px 0 rgba(58,90,64,0.13)"
@@ -173,7 +173,7 @@ const Index = () => {
                   <Input
                     type="text"
                     placeholder="First name"
-                    className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-300/60 rounded-lg shadow-none font-semibold placeholder:font-normal"
+                    className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-200/90 rounded-lg shadow-none font-extrabold text-base placeholder:font-semibold placeholder:text-base"
                     value={firstName}
                     required
                     disabled={loading}
@@ -183,7 +183,7 @@ const Index = () => {
                   <Input
                     type="text"
                     placeholder="Last name"
-                    className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-300/60 rounded-lg shadow-none font-semibold placeholder:font-normal"
+                    className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-200/90 rounded-lg shadow-none font-extrabold text-base placeholder:font-semibold placeholder:text-base"
                     value={lastName}
                     required
                     disabled={loading}
@@ -194,7 +194,7 @@ const Index = () => {
               <Input
                 type="email"
                 placeholder="Email"
-                className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-300/60 rounded-lg shadow-none font-semibold placeholder:font-normal"
+                className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-200/90 rounded-lg shadow-none font-extrabold text-base placeholder:font-semibold placeholder:text-base"
                 value={email}
                 required
                 disabled={loading}
@@ -205,7 +205,7 @@ const Index = () => {
               <Input
                 type="password"
                 placeholder="Password"
-                className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-300/60 rounded-lg shadow-none font-semibold placeholder:font-normal"
+                className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-200/90 rounded-lg shadow-none font-extrabold text-base placeholder:font-semibold placeholder:text-base"
                 value={password}
                 required
                 disabled={loading}
