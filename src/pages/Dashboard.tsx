@@ -93,11 +93,9 @@ export default function Dashboard() {
 
               {/* Center Sproutsly symbol */}
               <div className="flex-1 flex justify-center items-center pointer-events-none select-none">
-                <span className="rounded-full bg-green-600/90 shadow-lg ring-2 ring-white/60 border-2 border-green-300/40 p-2 sm:p-2.5 backdrop-blur-md flex items-center justify-center animate-fade-in">
-                  {/* Leaf/Sprout Lucide icon */}
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.5 22c2.5-8.5-2-13-7.5-15.63M15.5 22c-2.5-8.5 2-13 7.5-15.63M12 7c.35 2.2 2.34 4 5 4 2.21 0 4-1.79 4-4C21 3.13 17.5 2 15.5 2c-1.51 0-3.34.74-4.5 2C10.34 2.74 8.51 2 7 2 5 2 1.5 3.13 1.5 7c0 2.21 1.79 4 4 4 2.66 0 4.65-1.8 5-4Z"/>
-                  </svg>
+                <span className="rounded-full bg-green-600/90 shadow-lg ring-2 ring-white/60 border-2 border-green-300/40 p-2 sm:p-2.5 backdrop-blur-md flex items-center justify-center text-2xl sm:text-3xl animate-fade-in">
+                  {/* Sproutsly logo: just a leaf emoji */}
+                  🍃
                 </span>
               </div>
 
