@@ -54,7 +54,7 @@ export default function DashboardProfileAvatar() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate("/auth");
+    navigate("/"); // Redirect to home page after logout
   };
 
   // Use fetched profile name first, fallback to metadata/email/User

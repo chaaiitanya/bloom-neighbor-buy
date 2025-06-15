@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { Settings, Star, Heart, FileText, QrCode, Share2, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -41,7 +40,7 @@ export default function ProfileActionBar() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate("/auth");
+    navigate("/"); // Redirect to home page after logout
   };
 
   return (
@@ -74,4 +73,3 @@ export default function ProfileActionBar() {
     </ul>
   );
 }
-
