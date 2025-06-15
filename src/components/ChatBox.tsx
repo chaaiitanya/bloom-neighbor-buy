@@ -168,11 +168,11 @@ export default function ChatBox({ otherUserId, myUserId, onClose }: ChatBoxProps
   if (error) return <div className="text-red-500 text-sm py-2">{error}</div>;
 
   return (
-    <div className="flex flex-col h-80 max-h-[60vh] bg-white rounded-lg border shadow-lg">
-      <div className="flex items-center border-b px-4 py-2 bg-green-50 rounded-t-lg">
-        <span className="font-semibold text-green-800 flex-1">Chat with Seller</span>
+    <div className="flex flex-col h-80 max-h-[60vh] bg-white dark:bg-[#222824] rounded-lg border border-green-100 dark:border-green-800 shadow-lg">
+      <div className="flex items-center border-b border-green-100 dark:border-green-800 px-4 py-2 bg-green-50 dark:bg-[#263028] rounded-t-lg">
+        <span className="font-semibold text-green-800 dark:text-green-200 flex-1">Chat with Seller</span>
         {onClose && (
-          <button className="text-green-600 font-bold text-lg" onClick={onClose} aria-label="Close">&times;</button>
+          <button className="text-green-600 dark:text-green-300 font-bold text-lg" onClick={onClose} aria-label="Close">&times;</button>
         )}
       </div>
       <div className="flex-1 overflow-y-auto px-3 py-2">
@@ -182,10 +182,10 @@ export default function ChatBox({ otherUserId, myUserId, onClose }: ChatBoxProps
             className={`mb-2 flex ${msg.sender_id === myUserId ? "justify-end" : "justify-start"}`}
           >
             <span
-              className={`inline-block px-3 py-2 rounded-xl text-sm ${
+              className={`inline-block px-3 py-2 rounded-xl text-sm break-words max-w-[70%] ${
                 msg.sender_id === myUserId
                   ? "bg-green-600 text-white ml-6"
-                  : "bg-green-100 text-green-900 mr-6"
+                  : "bg-green-100 dark:bg-green-900 text-green-900 dark:text-green-100 mr-6"
               }`}
               style={msg.id.startsWith("temp-") ? { opacity: 0.6 } : {}}
             >
@@ -196,7 +196,7 @@ export default function ChatBox({ otherUserId, myUserId, onClose }: ChatBoxProps
         <div ref={endRef} />
       </div>
       <form
-        className="flex border-t px-2 py-2"
+        className="flex border-t border-green-100 dark:border-green-800 px-2 py-2 bg-white dark:bg-[#222824] rounded-b-lg"
         onSubmit={e => {
           e.preventDefault();
           sendMessage();
@@ -205,11 +205,15 @@ export default function ChatBox({ otherUserId, myUserId, onClose }: ChatBoxProps
         <Input
           value={input}
           onChange={e => setInput(e.target.value)}
-          className="mr-2"
+          className="mr-2 bg-white dark:bg-[#202824] text-green-900 dark:text-green-100 border dark:border-green-800"
           placeholder="Type a message..."
           disabled={sending}
         />
-        <Button type="submit" disabled={sending || !input.trim()} className="bg-green-600 hover:bg-green-700 text-white rounded-lg">
+        <Button
+          type="submit"
+          disabled={sending || !input.trim()}
+          className="bg-green-600 hover:bg-green-700 text-white dark:bg-green-700 dark:hover:bg-green-900 rounded-lg"
+        >
           Send
         </Button>
       </form>
