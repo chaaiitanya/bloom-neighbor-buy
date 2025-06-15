@@ -1,38 +1,29 @@
-import { useState, useRef, useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "@/integrations/supabase/client";
+
+import { useState, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import PlantImageUpload from "@/components/PlantImageUpload";
+import MultiImageUpload from "@/components/MultiImageUpload";
 import { useStaticCityAutocomplete } from "@/hooks/useStaticCityAutocomplete";
 import { useUserLocationCity } from "@/hooks/useUserLocationCity";
-import MultiImageUpload from "@/components/MultiImageUpload";
+import PlantNameInput from "@/components/post-plant/PlantNameInput";
+import PriceInput from "@/components/post-plant/PriceInput";
+import PlantDescription from "@/components/post-plant/PlantDescription";
+import PlantLocationInput from "@/components/post-plant/PlantLocationInput";
+import PostPlantFormWrapper from "@/components/post-plant/PostPlantFormWrapper";
+import { supabase } from "@/integrations/supabase/client";
 
 type PostPlantFormProps = {
   afterPost?: () => void;
 };
 
-// Helper to get Mapbox public token from Supabase Edge Environment
-const getMapboxToken = async (): Promise<string | null> => {
-  const { data, error } = await supabase.functions.invoke("get-secret", {
-    body: { key: "MAPBOX_PUBLIC_TOKEN" },
-  });
-  if (error) {
-    return null;
-  }
-  return data?.secret ?? null;
-};
-
 export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
-  // Photos array state!
   const [photos, setPhotos] = useState<string[]>([]);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Use static autocomplete hook for city/location
   const {
     cityInput: location,
     setCityInput: setLocation,
@@ -45,7 +36,6 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
     handleBlur,
   } = useStaticCityAutocomplete();
 
-  // --- Auto-detect location (city) on mount ---
   const { city: detectedCity, loading: locationLoading, error: locationError } =
     useUserLocationCity(location.length === 0); // only when input is empty
 
@@ -69,7 +59,6 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
     }
   }, [detectedCity, locationError, setLocation, location]);
 
-  const locationInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -87,7 +76,6 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
       });
       return;
     }
-    // --- enforce city recognition ---
     const locStandardized = location.trim().toLowerCase();
     if (locStandardized.length < 2) {
       toast({ title: "Please enter a valid city.", variant: "destructive" });
@@ -103,7 +91,6 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
       return;
     }
 
-    // Insert main plant entry (use first photo as primary)
     const { data: insertPlant, error } = await supabase
       .from("plants")
       .insert({
@@ -127,7 +114,6 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
       return;
     }
 
-    // Insert all images into plant_photos
     let failed = false;
     for (let i = 0; i < photos.length; i++) {
       const { error: photoErr } = await supabase.from("plant_photos").insert({
@@ -137,7 +123,6 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
       });
       if (photoErr) {
         failed = true;
-        // We continue to insert the rest, but only show toast at end
       }
     }
 
@@ -162,103 +147,36 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
   };
 
   return (
-    <form className="p-6 space-y-5" onSubmit={handleSubmit}>
-      <MultiImageUpload
-        images={photos}
-        setImages={setPhotos}
-        disabled={submitting}
-        maxImages={10}
-      />
-      <div>
-        <label className="block text-green-800 dark:text-green-100 font-semibold mb-1">Name</label>
-        <Input
-          className="bg-white dark:bg-[#232a26] text-green-800 dark:text-green-50 placeholder:text-green-400 dark:placeholder:text-green-500"
-          type="text"
-          placeholder="e.g. Fiddle Leaf Fig"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          required
+    <PostPlantFormWrapper>
+      <form className="space-y-5" onSubmit={handleSubmit}>
+        <MultiImageUpload
+          images={photos}
+          setImages={setPhotos}
           disabled={submitting}
+          maxImages={10}
         />
-      </div>
-      <div>
-        <label className="block text-green-800 dark:text-green-100 font-semibold mb-1">Price</label>
-        <Input
-          className="bg-white dark:bg-[#232a26] text-green-800 dark:text-green-50 placeholder:text-green-400 dark:placeholder:text-green-500"
-          type="number"
-          step="0.01"
-          min="0"
-          placeholder="e.g. 15.00"
-          value={price}
-          onChange={e => setPrice(e.target.value)}
-          required
-          disabled={submitting}
-        />
-      </div>
-      <div>
-        <label className="block text-green-800 dark:text-green-100 font-semibold mb-1">Description</label>
-        <Textarea
-          className="bg-white dark:bg-[#232a26] rounded-lg p-2 border border-green-100 min-h-[4rem] text-green-800 dark:text-green-50 placeholder:text-green-400 dark:placeholder:text-green-500"
-          placeholder="Any notes about your plant..."
-          value={description}
-          onChange={e => setDescription(e.target.value)}
-          required
-          disabled={submitting}
-        />
-      </div>
-      <div className="relative">
-        <label className="block text-green-800 dark:text-green-100 font-semibold mb-1">Location (City)</label>
-        <Input
-          type="text"
-          className="bg-white dark:bg-[#232a26] text-green-800 dark:text-green-50 placeholder:text-green-400 dark:placeholder:text-green-500"
-          placeholder="Enter your city (e.g. Dallas, Mumbai, London,...)"
+        <PlantNameInput value={name} onChange={setName} disabled={submitting} />
+        <PriceInput value={price} onChange={setPrice} disabled={submitting} />
+        <PlantDescription value={description} onChange={setDescription} disabled={submitting} />
+        <PlantLocationInput
           value={location}
-          onChange={e => handleInputChange(e.target.value)}
-          required
+          onInputChange={handleInputChange}
           disabled={submitting}
-          autoComplete="off"
-          ref={locationInputRef}
-          onFocus={() => setShowDropdown(true)}
-          onBlur={handleBlur}
-          aria-autocomplete="list"
-          aria-controls="location-autocomplete-list"
+          suggestions={suggestions}
+          isLoading={isLoading}
+          showDropdown={showDropdown}
+          setShowDropdown={setShowDropdown}
+          handleSuggestionClick={handleSuggestionClick}
+          handleBlur={handleBlur}
         />
-        {showDropdown && location && (
-          <ul
-            id="location-autocomplete-list"
-            className="absolute z-50 left-0 w-full bg-white dark:bg-[#232a26] border border-green-100 dark:border-green-800 rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto animate-fade-in"
-            style={{ maxWidth: '100%' }}
-            role="listbox"
-          >
-            {isLoading ? (
-              <li className="px-4 py-2 text-green-600 dark:text-green-300 font-medium">Loading…</li>
-            ) : suggestions.length > 0 ? (
-              suggestions.map((loc, i) => (
-                <li
-                  key={loc + i}
-                  className="px-4 py-2 cursor-pointer hover:bg-green-50 dark:hover:bg-green-900 text-green-800 dark:text-green-50 font-medium"
-                  onMouseDown={() => handleSuggestionClick(loc)}
-                  role="option"
-                  tabIndex={-1}
-                >
-                  {loc}
-                </li>
-              ))
-            ) : (
-              location.length >= 2 && (
-                <li className="px-4 py-2 text-green-700 dark:text-green-400">No cities found</li>
-              )
-            )}
-          </ul>
-        )}
-      </div>
-      <button
-        type="submit"
-        className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-xl shadow mt-4 transition disabled:opacity-70 disabled:cursor-wait"
-        disabled={submitting}
-      >
-        {submitting ? "Posting..." : "Post Plant"}
-      </button>
-    </form>
+        <button
+          type="submit"
+          className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-xl shadow mt-4 transition disabled:opacity-70 disabled:cursor-wait"
+          disabled={submitting}
+        >
+          {submitting ? "Posting..." : "Post Plant"}
+        </button>
+      </form>
+    </PostPlantFormWrapper>
   );
 }
