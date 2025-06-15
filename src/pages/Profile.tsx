@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ProfilePreview } from "@/components/ProfilePreview";
 import BottomTabNav from "@/components/BottomTabNav";
 import ProfileEditForm from "@/components/ProfileEditForm";
@@ -23,26 +23,36 @@ export default function Profile() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    (async () => {
-      const { data: userObj } = await supabase.auth.getUser();
-      if (userObj?.user) {
-        const { data: prof } = await supabase
-          .from("profiles")
-          .select("full_name, avatar_url, rating")
-          .eq("id", userObj.user.id)
-          .maybeSingle();
-        setProfile({
-          full_name: prof?.full_name || userObj.user.user_metadata?.full_name || userObj.user.email || "User",
-          avatar_url: prof?.avatar_url || userObj.user.user_metadata?.avatar_url || "",
-          rating: typeof prof?.rating === "number" ? Number(prof.rating) : undefined,
-          sales: undefined, // Could fetch sales count here!
-          email: userObj.user.email,
-        });
-      }
-      setLoading(false);
-    })();
+  // This function fetches the profile from Supabase and updates state
+  const fetchProfile = useCallback(async () => {
+    setLoading(true);
+    const { data: userObj } = await supabase.auth.getUser();
+    if (userObj?.user) {
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("full_name, avatar_url, rating")
+        .eq("id", userObj.user.id)
+        .maybeSingle();
+      setProfile({
+        full_name: prof?.full_name || userObj.user.user_metadata?.full_name || userObj.user.email || "User",
+        avatar_url: prof?.avatar_url || userObj.user.user_metadata?.avatar_url || "",
+        rating: typeof prof?.rating === "number" ? Number(prof.rating) : undefined,
+        sales: undefined, // Could fetch sales count here!
+        email: userObj.user.email,
+      });
+    }
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  // After saving the profile, re-fetch info
+  const handleProfileUpdated = () => {
+    setEditMode(false);
+    fetchProfile();
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-50 to-white pb-20">
@@ -70,7 +80,7 @@ export default function Profile() {
         <ProfileSocialLinks />
         {editMode ? (
           <div className="w-full bg-white rounded-2xl p-4 border shadow mt-4">
-            <ProfileEditForm onUpdated={() => setEditMode(false)} />
+            <ProfileEditForm onUpdated={handleProfileUpdated} />
           </div>
         ) : (
           <>
@@ -88,4 +98,3 @@ export default function Profile() {
     </div>
   );
 }
-
