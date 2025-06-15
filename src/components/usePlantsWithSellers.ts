@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import cityCoordinates from "./cityCoordinates";
+import { getCityDistanceKm } from "./cityDistanceUtils";
 
 // Type definitions matching the old DashboardPlantList
 export type PlantRaw = {
@@ -15,7 +17,7 @@ export type PlantRaw = {
   type?: string;
 };
 
-export function usePlantsWithSellers() {
+export function usePlantsWithSellers(userCity?: string) {
   const [plants, setPlants] = useState<PlantRaw[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -96,12 +98,17 @@ export function usePlantsWithSellers() {
           `[Plant "${plant.name}"] SellerId: ${plant.user_id} | Seller Name: "${sellerName}"`
         );
 
+        // Calculate city-to-city distance if both cities known, else use "—"
+        const sellerCity = plant.location || "";
+        const userCityValue = userCity || "";
+        const cityDistance = getCityDistanceKm(userCityValue, sellerCity);
+
         return {
           id: plant.id,
           name: plant.name,
           price: Number(plant.price),
           photo_url: plant.photo_url,
-          distance: "—",
+          distance: cityDistance,
           location: plant.location ?? "Unlisted",
           sellerId: plant.user_id,
           seller: sellerName,
@@ -118,7 +125,7 @@ export function usePlantsWithSellers() {
     }
 
     fetchPlantsWithProfileNames();
-  }, []);
+  }, [userCity]);
 
   return { plants, loading, error };
 }

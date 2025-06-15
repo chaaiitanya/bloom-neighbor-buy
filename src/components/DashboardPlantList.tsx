@@ -5,6 +5,7 @@ import PlantDetailDrawer from "@/components/PlantDetailDrawer";
 import { Loader2 } from "lucide-react";
 import { usePlantsWithSellers, PlantRaw } from "./usePlantsWithSellers";
 import DashboardPlantSuggestionList from "./DashboardPlantSuggestionList";
+import { useLocation } from "react-router-dom";
 
 // Simple Levenshtein distance calculation for suggestion rendering
 function levenshtein(a: string, b: string): number {
@@ -42,8 +43,10 @@ export default function DashboardPlantList({
   minPrice?: string;
   maxPrice?: string;
 }) {
-  // Get all plant data from our custom hook
-  const { plants, loading, error } = usePlantsWithSellers();
+  // Pass the user's city (from search bar) to the hook,
+  // which is used to calculate distances from seller city to searched city.
+  const { plants, loading, error } = usePlantsWithSellers(search);
+
   // Get logged-in user id, so we can filter out self-listings
   const [myUserId, setMyUserId] = useState<string | null>(null);
   const [selectedPlant, setSelectedPlant] = useState<any | null>(null);
