@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -111,20 +110,60 @@ export default function ChatBox({ otherUserId, myUserId, onClose }: ChatBoxProps
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, chatId]);
 
-  // 3. Send a message
+  // 3. Send a message (add optimistic update)
   const sendMessage = async () => {
     if (!input.trim() || !chatId) return;
     setSending(true);
     setError(null);
+
+    // Add optimistic message
+    const tempId = "temp-" + Date.now();
+    const optimisticMessage: Message = {
+      id: tempId,
+      sender_id: myUserId,
+      content: input.trim(),
+      sent_at: new Date().toISOString(),
+    };
+    setMessages(msgs => [...msgs, optimisticMessage]);
+    setInput("");
+
     let { error } = await supabase.from("private_messages").insert({
       chat_id: chatId,
       sender_id: myUserId,
-      content: input.trim(),
+      content: optimisticMessage.content,
     });
     setSending(false);
-    setInput("");
-    if (error) setError("Failed to send message.");
+    if (error) {
+      setError("Failed to send message.");
+      // Remove the optimistic message if error
+      setMessages(msgs => msgs.filter(msg => msg.id !== tempId));
+    }
   };
+
+  // We'll filter out duplicate optimistic messages when the real message arrives
+  // (they will have the same content and sender within the last 30s)
+  useEffect(() => {
+    setMessages(existing => {
+      const seen = new Set();
+      return existing.filter((msg, idx, arr) => {
+        if (msg.id.startsWith("temp-")) {
+          // Check for a real message with same content and sender sent very recently
+          const hasReal = arr.some(m =>
+            m.id !== msg.id &&
+            !m.id.startsWith("temp-") &&
+            m.content === msg.content &&
+            m.sender_id === msg.sender_id &&
+            Math.abs(new Date(m.sent_at).getTime() - new Date(msg.sent_at).getTime()) < 30000
+          );
+          if (hasReal) return false;
+        }
+        const sig = `${msg.id}`;
+        if (seen.has(sig)) return false;
+        seen.add(sig);
+        return true;
+      });
+    });
+  }, [messages.length]);
 
   if (error) return <div className="text-red-500 text-sm py-2">{error}</div>;
 
@@ -148,6 +187,7 @@ export default function ChatBox({ otherUserId, myUserId, onClose }: ChatBoxProps
                   ? "bg-green-600 text-white ml-6"
                   : "bg-green-100 text-green-900 mr-6"
               }`}
+              style={msg.id.startsWith("temp-") ? { opacity: 0.6 } : {}}
             >
               {msg.content}
             </span>
