@@ -9,6 +9,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      community_chat: {
+        Row: {
+          avatar_url: string | null
+          content: string
+          id: string
+          sender_id: string | null
+          sender_name: string | null
+          sent_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          content: string
+          id?: string
+          sender_id?: string | null
+          sender_name?: string | null
+          sent_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          content?: string
+          id?: string
+          sender_id?: string | null
+          sender_name?: string | null
+          sent_at?: string
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           created_at: string

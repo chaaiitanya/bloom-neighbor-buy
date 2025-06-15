@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
 
+// CommunityMessage type matches the new 'community_chat' table structure
 type CommunityMessage = {
   id: string;
   sender_id: string | null;
@@ -36,13 +37,23 @@ export default function CommunityChatBox({
   // Fetch recent messages from public.community_chat
   useEffect(() => {
     (async () => {
-      let { data, error } = await supabase
+      const { data, error } = await supabase
         .from("community_chat")
         .select("id,sender_id,sender_name,avatar_url,content,sent_at")
         .order("sent_at", { ascending: true })
         .limit(100);
-      if (data) setMessages(data);
+
+      if (error) {
+        toast({
+          title: "Failed to load messages",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+      setMessages(data as CommunityMessage[] || []);
     })();
+
     // Listen for new messages in realtime
     const channel = supabase
       .channel("community-chat-room")
@@ -83,16 +94,18 @@ export default function CommunityChatBox({
     setSending(true);
 
     // Send the message to Supabase
-    const { error } = await supabase.from("community_chat").insert({
-      sender_id: user.id,
-      content: message,
-      sender_name:
-        user.user_metadata?.full_name ||
-        user.user_metadata?.username ||
-        user.email?.split("@")[0] ||
-        "User",
-      avatar_url: user.user_metadata?.avatar_url || null,
-    });
+    const { error } = await supabase.from("community_chat").insert([
+      {
+        sender_id: user.id,
+        content: message,
+        sender_name:
+          user.user_metadata?.full_name ||
+          user.user_metadata?.username ||
+          user.email?.split("@")[0] ||
+          "User",
+        avatar_url: user.user_metadata?.avatar_url || null,
+      }
+    ]);
     setSending(false);
     setMessage("");
     if (error) {
@@ -179,4 +192,3 @@ export default function CommunityChatBox({
     </div>
   );
 }
-
