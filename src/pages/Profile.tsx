@@ -8,7 +8,10 @@ import ProfileQrShare from "@/components/ProfileQrShare";
 import ProfileSocialLinks from "@/components/ProfileSocialLinks";
 import ProfileListings from "@/components/ProfileListings";
 import ProfileActionBar from "@/components/ProfileActionBar";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 type ProfileData = {
   full_name?: string;
@@ -22,6 +25,7 @@ export default function Profile() {
   const [editMode, setEditMode] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // This function fetches the profile from Supabase and updates state
   const fetchProfile = useCallback(async () => {
@@ -54,11 +58,21 @@ export default function Profile() {
     fetchProfile();
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
+
+  const cardShadow =
+    "shadow-[0_4px_40px_0_rgba(59,130,91,0.10)] dark:shadow-[0_2px_32px_0_rgba(24,31,26,0.28)] shadow-xl";
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-100 to-white dark:from-[#181f1a] dark:to-[#232a26]/80 pb-24 transition-colors">
       <div className="w-full max-w-xl mx-auto px-3 sm:px-0 mt-4">
-        {/* Card container for profile */}
-        <div className="relative rounded-3xl shadow-xl bg-white/75 dark:bg-[#161c17]/95 border border-green-100 dark:border-[#223128] ring-1 ring-green-100 dark:ring-[#223128] p-6 flex flex-col items-center mb-6 animate-fade-in transition-colors">
+        {/* Clean Card */}
+        <div
+          className={`relative rounded-3xl ${cardShadow} bg-white/90 dark:bg-[#161c17]/95 border border-green-100 dark:border-[#223128] ring-1 ring-green-100 dark:ring-[#223128] p-7 flex flex-col items-center mb-7 animate-fade-in transition-colors`}
+        >
           {loading ? (
             <div className="mb-2 h-12 w-32 rounded-full bg-green-100 dark:bg-[#232a26]/60 animate-pulse" />
           ) : (
@@ -69,16 +83,16 @@ export default function Profile() {
               sales={profile?.sales ?? 22}
             />
           )}
-          <div className="mt-2 text-green-700 dark:text-green-100 text-xl font-semibold tracking-tight">
+          <div className="mt-3 text-green-800 dark:text-green-100 text-xl font-semibold tracking-tight">
             {loading ? "..." : profile?.full_name || "User"}
           </div>
           <button
             onClick={() => setEditMode(!editMode)}
-            className="text-green-600 underline mt-1 text-sm hover:text-green-800 dark:text-green-300 dark:hover:text-green-100 transition story-link"
+            className="text-green-600 underline mt-1 text-sm hover:text-green-800 dark:text-green-300 dark:hover:text-green-100 transition"
           >
             {editMode ? "Cancel Edit" : "Edit Profile"}
           </button>
-          <div className="w-full mt-3">
+          <div className="w-full mt-4">
             <ProfileStats />
           </div>
           <ProfileSocialLinks />
@@ -88,6 +102,16 @@ export default function Profile() {
             </div>
           )}
         </div>
+
+        {/* Logout Button */}
+        <Button
+          onClick={handleLogout}
+          variant="destructive"
+          className="w-full mb-8 flex gap-2 items-center py-3 rounded-2xl font-bold text-base text-red-700 dark:text-red-400 bg-red-100 dark:bg-[#232a26]/80 hover:bg-red-200 dark:hover:bg-[#232a26]/60 transition-all"
+        >
+          <LogOut className="w-5 h-5" />
+          Log out
+        </Button>
 
         {!editMode && (
           <>
