@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+
+import { useState, useRef } from "react";
 import { Search } from "lucide-react";
 
 const plantTypes = [
@@ -60,27 +61,19 @@ function getSuggestions(query: string) {
 export default function SearchBar({
   plantType,
   setPlantType,
-  search,
-  setSearch,
 }: {
   plantType: string;
   setPlantType: (pt: string) => void;
-  search?: string;
-  setSearch?: (v: string) => void;
 }) {
-  const [internalSearch, setInternalSearch] = useState("");
+  const [search, setSearch] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Use search prop if given (controlled), otherwise internal state (uncontrolled)
-  const value = typeof search === "string" ? search : internalSearch;
-  const onChange = setSearch || setInternalSearch;
-
-  const suggestions = getSuggestions(value);
+  const suggestions = getSuggestions(search);
 
   // Handle suggestion click
   function handleSuggestionClick(s: string) {
-    onChange(s);
+    setSearch(s);
     setShowDropdown(false);
     // Optionally blur input
     inputRef.current?.blur();
@@ -92,14 +85,6 @@ export default function SearchBar({
     setTimeout(() => setShowDropdown(false), 120);
   }
 
-  useEffect(() => {
-    // Keep internal state in sync if parent changes value outside
-    if (typeof search === "string" && search !== internalSearch) {
-      setInternalSearch(search);
-    }
-    // eslint-disable-next-line
-  }, [search]);
-
   return (
     <form className="w-full mb-10" onSubmit={e => e.preventDefault()} autoComplete="off">
       <div className="flex flex-col sm:flex-row items-stretch gap-3 relative">
@@ -108,13 +93,13 @@ export default function SearchBar({
             id="search-plants"
             type="text"
             ref={inputRef}
-            value={value}
+            value={search}
             placeholder="Search for neighbourhood plants..."
             className="w-full rounded-2xl border border-white/20 bg-black/75 backdrop-blur-xl pl-12 pr-4 py-4 text-xl text-green-100 placeholder:text-green-300/80 shadow focus:ring-2 focus:ring-green-200 focus:outline-none transition"
             autoComplete="off"
             onFocus={() => setShowDropdown(true)}
             onChange={e => {
-              onChange(e.target.value);
+              setSearch(e.target.value);
               setShowDropdown(true);
             }}
             onBlur={handleBlur}
