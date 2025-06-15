@@ -1,3 +1,4 @@
+
 import { MapPin } from "lucide-react";
 
 type PlantProps = {
@@ -13,11 +14,13 @@ type PlantProps = {
 export function PlantCard({ image, name, price, distance, location, seller, onClick }: PlantProps) {
   return (
     <div
-      className="bg-white rounded-2xl shadow hover:shadow-lg transition border cursor-pointer overflow-hidden flex flex-col"
+      className="bg-white/75 rounded-2xl shadow transition-all duration-200 border cursor-pointer overflow-hidden flex flex-col
+        hover:scale-105 hover:shadow-green-200/60 hover:ring-2 hover:ring-green-200/70 hover:z-10"
       onClick={onClick}
       role="button"
       tabIndex={0}
       aria-label={`View ${name}`}
+      style={{ backdropFilter: "blur(7px)", WebkitBackdropFilter: "blur(7px)" }}
     >
       <img
         src={image}

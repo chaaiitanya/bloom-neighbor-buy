@@ -86,7 +86,8 @@ export default function Dashboard() {
         {/* Header Card: Avatar + Post Plant */}
         <div className="flex justify-between items-start w-full px-0">
           <div className="flex-1">
-            <div className="backdrop-blur-sm bg-white/80 shadow-2xl border border-green-100/60 rounded-3xl flex items-center gap-4 py-4 pl-5 pr-3 sm:pl-8 sm:pr-4 ring-1 ring-white/30">
+            <div className="backdrop-blur-sm bg-white/80 shadow-2xl border border-green-100/60 rounded-3xl flex items-center gap-4 py-4 pl-5 pr-3 sm:pl-8 sm:pr-4 ring-1 ring-white/30
+              transition-all duration-300 hover:scale-105 hover:shadow-green-200/50 hover:ring-2 hover:ring-green-200/70">
               <DashboardProfileAvatar />
               <div className="flex-1 min-w-[1px]" />
               {/* Post plant button appears to the right */}
@@ -94,7 +95,8 @@ export default function Dashboard() {
                 <SheetTrigger asChild>
                   <Button
                     variant="default"
-                    className="bg-green-700 hover:bg-green-800 text-white shadow-xl rounded-xl px-5 py-2 flex gap-2 items-center font-bold"
+                    className="bg-green-700 hover:bg-green-800 text-white shadow-xl rounded-xl px-5 py-2 flex gap-2 items-center font-bold
+                      transition-transform duration-200 hover:scale-105 hover:shadow-green-500/30"
                     aria-label="Post a Plant"
                   >
                     <Plus className="w-5 h-5" />
@@ -115,7 +117,8 @@ export default function Dashboard() {
         </div>
 
         {/* Search + Filters Section Card */}
-        <div className="w-full backdrop-blur-sm bg-white/85 border border-green-100/60 rounded-3xl shadow-2xl ring-1 ring-white/20 py-7 px-4 sm:px-10 flex flex-col gap-5">
+        <div className="w-full backdrop-blur-sm bg-white/85 border border-green-100/60 rounded-3xl shadow-2xl ring-1 ring-white/20 py-7 px-4 sm:px-10 flex flex-col gap-5
+          transition-all duration-300 hover:scale-105 hover:ring-2 hover:ring-green-200/70 hover:shadow-green-100/60">
           <DashboardSearchBar value={search} onChange={setSearch} />
           {/* Category filters row */}
           <div className="flex flex-col sm:flex-row items-center gap-3 flex-wrap w-full">
@@ -142,7 +145,8 @@ export default function Dashboard() {
         </div>
         {/* Plant List */}
         <div className="px-0 sm:px-2 w-full">
-          <div className="backdrop-blur-sm bg-white/75 border border-green-100/50 rounded-2xl shadow-lg animate-fade-in p-2 sm:p-4 transition-all duration-300">
+          <div className="backdrop-blur-sm bg-white/75 border border-green-100/50 rounded-2xl shadow-lg animate-fade-in p-2 sm:p-4 transition-all duration-300
+              hover:scale-105 hover:shadow-green-100/60 hover:ring-2 hover:ring-green-200/60">
             <DashboardPlantList
               search={search}
               range={range}
