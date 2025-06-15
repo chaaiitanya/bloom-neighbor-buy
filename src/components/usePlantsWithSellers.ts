@@ -57,7 +57,7 @@ export function usePlantsWithSellers() {
       const userIds = Array.from(
         new Set(data.map((plant: any) => plant.user_id).filter(Boolean))
       );
-      // Step 3: Fetch seller profiles in one batch (id, full_name)
+      
       let profileMap: Record<string, string> = {};
       if (userIds.length > 0) {
         const { data: profiles, error: profileErr } = await supabase
@@ -66,16 +66,27 @@ export function usePlantsWithSellers() {
           .in("id", userIds);
 
         if (profiles && !profileErr) {
-          // Map id to full_name (allow null or empty fallback)
           for (const profile of profiles) {
             profileMap[profile.id] = profile.full_name?.trim() || "";
           }
         }
+
+        // Log the profiles for debugging!
+        console.log("Profile Map:", profileMap);
       }
 
       // Step 4: Map plants adding correct seller name and description
       const transformed: PlantRaw[] = data.map((plant: any) => {
-        const hasFullName = plant.user_id && profileMap[plant.user_id] && profileMap[plant.user_id].length > 0;
+        // Debugging: what's the profile name being mapped?
+        const profileName =
+          plant.user_id && profileMap[plant.user_id]
+            ? profileMap[plant.user_id]
+            : "";
+
+        console.log(
+          `[Plant "${plant.name}"] SellerId: ${plant.user_id} | Profile Name: "${profileName}"`
+        );
+
         return {
           id: plant.id,
           name: plant.name,
@@ -84,14 +95,18 @@ export function usePlantsWithSellers() {
           distance: "—",
           location: plant.location ?? "Unlisted",
           sellerId: plant.user_id,
-          // Prefer full name, else show "Unknown Seller"
-          seller: hasFullName
-            ? profileMap[plant.user_id]
-            : "Unknown Seller",
+          // Strict fallback: only show profile full name if non-empty, else "Unknown Seller"
+          seller:
+            profileName.length > 0
+              ? profileName
+              : "Unknown Seller",
           description: plant.description ?? null,
           type: "all",
         };
       });
+
+      // Debug print all mapped plants and sellers
+      console.log("Mapped Plants:", transformed);
 
       setPlants(transformed);
       setLoading(false);
