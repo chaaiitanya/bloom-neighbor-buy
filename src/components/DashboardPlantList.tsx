@@ -14,6 +14,7 @@ type PlantRaw = {
   location: string | null;
   sellerId: string;
   seller: string;
+  description?: string | null;
   type?: string;
 };
 
@@ -62,7 +63,7 @@ export default function DashboardPlantList({
     setError(null);
 
     async function fetchPlantsWithProfileNames() {
-      // Step 1: Get ALL plants as before. No join, keep fast.
+      // Step 1: Get ALL plants, now including description.
       let { data, error } = await supabase
         .from("plants")
         .select(`
@@ -70,6 +71,7 @@ export default function DashboardPlantList({
           name,
           price,
           photo_url,
+          description,
           location,
           user_id,
           created_at
@@ -108,7 +110,7 @@ export default function DashboardPlantList({
         }
       }
 
-      // Step 4: Map plants adding correct seller name
+      // Step 4: Map plants adding correct seller name and description
       const transformed: PlantRaw[] = data.map((plant: any) => ({
         id: plant.id,
         name: plant.name,
@@ -121,6 +123,7 @@ export default function DashboardPlantList({
         seller:
           (plant.user_id && profileMap[plant.user_id]) ||
           (plant.user_id ? plant.user_id.slice(0, 6) : "Unknown"),
+        description: plant.description ?? null,
         type: "all",
       }));
 
@@ -154,7 +157,6 @@ export default function DashboardPlantList({
     filteredPlants = filteredPlants.filter((plant) => plant.price <= max);
   }
 
-  // Check if any filter applied
   const didFilter =
     (search && search.trim()) ||
     (filter && filter !== "all") ||
@@ -162,8 +164,7 @@ export default function DashboardPlantList({
     minPrice ||
     maxPrice;
 
-  // --- CRITICAL: Forward sellerId and seller to PlantDetailDrawer ---
-  // Now shape the plant object for the grid/list and for PlantDetailDrawer:
+  // Adjust gridPlants to include additionalDetails
   const gridPlants = (arr: PlantRaw[]) =>
     arr.map((plant) => ({
       id: plant.id,
@@ -174,10 +175,10 @@ export default function DashboardPlantList({
       location: plant.location ?? "Unlisted",
       seller: plant.seller ?? (plant.sellerId ? plant.sellerId.slice(0, 6) : "Unknown"),
       sellerId: plant.sellerId,
+      additionalDetails: plant.description ?? "",
       type: plant.type ?? "all"
     }));
 
-  // Loading/error UI
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12 text-green-700">
@@ -193,11 +194,9 @@ export default function DashboardPlantList({
     );
   }
 
-  // Prepare 'other area' suggestions
   let otherAreaPlants: PlantRaw[] = [];
   if (didFilter && filteredPlants.length === 0) {
-    let suggestionSource = plants.slice(); // all plants
-    // If a search was provided, sort all by 'nearest' location match to the term.
+    let suggestionSource = plants.slice();
     if (search && search.trim()) {
       const q = search.trim().toLowerCase();
       suggestionSource = suggestionSource
@@ -207,15 +206,12 @@ export default function DashboardPlantList({
             ? levenshtein(plant.location.toLowerCase(), q)
             : 99
         }))
-        // Only show plants from other locations, not where string matches search exactly
         .filter(plant => (plant.location?.toLowerCase() || "") !== q)
         .sort((a, b) => (a._distance as number) - (b._distance as number));
     }
-    // Limit suggestion count for UX
     otherAreaPlants = suggestionSource.slice(0, 20);
   }
 
-  // Add debug log for click:
   const handlePlantClick = (plant: any) => {
     console.log("Plant selected for drawer:", plant);
     setSelectedPlant(plant);
