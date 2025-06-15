@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+
+import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,6 +7,7 @@ import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import PlantImageUpload from "@/components/PlantImageUpload";
 import { useStaticCityAutocomplete } from "@/hooks/useStaticCityAutocomplete";
+import { useUserLocationCity } from "@/hooks/useUserLocationCity";
 
 type PostPlantFormProps = {
   afterPost?: () => void;
@@ -41,6 +43,30 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
     handleSuggestionClick,
     handleBlur,
   } = useStaticCityAutocomplete();
+
+  // --- Auto-detect location (city) on mount ---
+  const { city: detectedCity, loading: locationLoading, error: locationError } =
+    useUserLocationCity(location.length === 0); // only when input is empty
+
+  useEffect(() => {
+    if (
+      detectedCity &&
+      location.length === 0 // only if input is empty
+    ) {
+      setLocation(detectedCity);
+      toast({
+        title: "Detected your city",
+        description: `Location pre-filled as ${detectedCity}`,
+      });
+    }
+    if (locationError && location.length === 0) {
+      toast({
+        title: "Could not detect city",
+        description: "Please enter your city manually.",
+        variant: "destructive",
+      });
+    }
+  }, [detectedCity, locationError, setLocation, location]);
 
   const locationInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -192,3 +218,4 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
     </form>
   );
 }
+
