@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -58,16 +57,20 @@ export function usePlantsWithSellers() {
         new Set(data.map((plant: any) => plant.user_id).filter(Boolean))
       );
       
-      let profileMap: Record<string, string> = {};
+      let profileMap: Record<string, { full_name?: string; first_name?: string; last_name?: string }> = {};
       if (userIds.length > 0) {
         const { data: profiles, error: profileErr } = await supabase
           .from("profiles")
-          .select("id, full_name")
+          .select("id, full_name, first_name, last_name")
           .in("id", userIds);
 
         if (profiles && !profileErr) {
           for (const profile of profiles) {
-            profileMap[profile.id] = profile.full_name?.trim() || "";
+            profileMap[profile.id] = {
+              full_name: profile.full_name?.trim() || "",
+              first_name: profile.first_name?.trim() || "",
+              last_name: profile.last_name?.trim() || "",
+            };
           }
         }
 
@@ -77,14 +80,20 @@ export function usePlantsWithSellers() {
 
       // Step 4: Map plants adding correct seller name and description
       const transformed: PlantRaw[] = data.map((plant: any) => {
-        // Debugging: what's the profile name being mapped?
-        const profileName =
-          plant.user_id && profileMap[plant.user_id]
-            ? profileMap[plant.user_id]
-            : "";
+        // Get seller-naming priority: full_name > `${first_name} ${last_name}` > Unknown Seller
+        const profile = plant.user_id && profileMap[plant.user_id] ? profileMap[plant.user_id] : null;
+        let sellerName = "Unknown Seller";
+        if (profile) {
+          if (profile.full_name && profile.full_name.length > 0) {
+            sellerName = profile.full_name;
+          } else if ((profile.first_name && profile.first_name.length > 0) || (profile.last_name && profile.last_name.length > 0)) {
+            const nameArr = [profile.first_name, profile.last_name].filter(Boolean);
+            sellerName = nameArr.length ? nameArr.join(" ") : "Unknown Seller";
+          }
+        }
 
         console.log(
-          `[Plant "${plant.name}"] SellerId: ${plant.user_id} | Profile Name: "${profileName}"`
+          `[Plant "${plant.name}"] SellerId: ${plant.user_id} | Seller Name: "${sellerName}"`
         );
 
         return {
@@ -95,11 +104,7 @@ export function usePlantsWithSellers() {
           distance: "—",
           location: plant.location ?? "Unlisted",
           sellerId: plant.user_id,
-          // Strict fallback: only show profile full name if non-empty, else "Unknown Seller"
-          seller:
-            profileName.length > 0
-              ? profileName
-              : "Unknown Seller",
+          seller: sellerName,
           description: plant.description ?? null,
           type: "all",
         };
@@ -117,4 +122,3 @@ export function usePlantsWithSellers() {
 
   return { plants, loading, error };
 }
-
