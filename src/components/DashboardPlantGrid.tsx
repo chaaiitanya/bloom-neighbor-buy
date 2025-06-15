@@ -10,6 +10,7 @@ type Plant = {
   seller: string;
   sellerId: string;
   type: string;
+  id: string; // Make sure id is present
 };
 
 interface DashboardPlantGridProps {
@@ -26,7 +27,7 @@ export default function DashboardPlantGrid({ plants, onPlantClick }: DashboardPl
   return (
     <>
       {plants.map((plant, i) => (
-        <PlantCard key={i} {...plant} onClick={() => onPlantClick(plant)} />
+        <PlantCard key={plant.id || i} {...plant} onClick={() => onPlantClick(plant)} id={plant.id} />
       ))}
     </>
   );

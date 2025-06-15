@@ -71,6 +71,7 @@ export default function PlantDetailDrawer({ open, plant, onClose }: PlantDetailD
         <DrawerHeader className="p-0">
           <div className="relative">
             <img src={plant.image} alt={plant.name} className="w-full h-56 object-cover rounded-t-2xl" style={{ background: "#f6faf7" }} />
+            {/* Optionally, add heart button here if needed in future */}
             <DrawerClose className="absolute top-3 right-3 z-10 bg-white rounded-full shadow p-1 hover:bg-green-50 transition">
               <span className="sr-only">Close</span>
               <svg width={22} height={22} viewBox="0 0 22 22" fill="none"><path d="M6 6L11 11M11 11L16 16M11 11L16 6M11 11L6 16" stroke="#3B7C41" strokeWidth="2" strokeLinecap="round"/></svg>

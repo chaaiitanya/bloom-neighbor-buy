@@ -3,6 +3,7 @@ import { PlantCard } from "./PlantCard";
 
 const trendingPlants = [
   {
+    id: "demo-3",
     image: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=600&q=80",
     name: "Marigold Flowers",
     price: "$5",
@@ -11,6 +12,7 @@ const trendingPlants = [
     seller: "Alex"
   },
   {
+    id: "demo-4",
     image: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80",
     name: "Pine Sapling (3x)",
     price: "$6",
@@ -26,8 +28,8 @@ export default function TrendingPlants() {
       <h3 className="text-lg font-bold text-green-800 mb-2">Trending Plants Nearby</h3>
       <div className="flex gap-3 overflow-x-auto">
         {trendingPlants.map((plant, idx) => (
-          <div key={idx} className="min-w-[220px]">
-            <PlantCard {...plant} />
+          <div key={plant.id || idx} className="min-w-[220px]">
+            <PlantCard {...plant} id={plant.id} />
           </div>
         ))}
       </div>
