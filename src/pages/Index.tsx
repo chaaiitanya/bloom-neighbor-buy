@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,9 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { LogIn } from "lucide-react";
+import SproutslyLogo from "@/components/SproutslyLogo";
 
 // Planty background and logo
-const leavesIcon = "/lovable-uploads/05906f64-8b32-4737-a074-8f373f371349.png";
 const bgImage = "/lovable-uploads/57e20818-f97d-4a73-ba99-7f6eedf5d5f9.png";
 
 // Reference green from screenshot (#18c964)
@@ -128,7 +127,9 @@ const Index = () => {
           }}
         >
           {/* Logo and heading */}
-          <img alt="Sproutsly logo" src={leavesIcon} className="w-12 h-12 mb-3" />
+          <div className="mb-3">
+            <SproutslyLogo size={48} />
+          </div>
           <h1
             className="font-extrabold text-5xl mb-2 text-center tracking-tighter select-none drop-shadow"
             style={{
@@ -264,4 +265,3 @@ const Index = () => {
 };
 
 export default Index;
-
