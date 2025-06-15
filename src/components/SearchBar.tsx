@@ -1,5 +1,6 @@
 
 import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 
 const plantTypes = [
@@ -68,6 +69,7 @@ export default function SearchBar({
   const [search, setSearch] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   const suggestions = getSuggestions(search);
 
@@ -75,18 +77,30 @@ export default function SearchBar({
   function handleSuggestionClick(s: string) {
     setSearch(s);
     setShowDropdown(false);
-    // Optionally blur input
     inputRef.current?.blur();
   }
 
-  // Close dropdown if clicking elsewhere
   function handleBlur(e: React.FocusEvent<HTMLInputElement>) {
-    // Timeout is needed to allow click event on dropdown
     setTimeout(() => setShowDropdown(false), 120);
   }
 
+  // SUBMIT HANDLER: Go to /dashboard with query param
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (search?.trim().length) {
+      // encodeURIComponent for safety
+      navigate(`/dashboard?search=${encodeURIComponent(search.trim())}`);
+    } else {
+      navigate(`/dashboard`);
+    }
+  }
+
   return (
-    <form className="w-full mb-10" onSubmit={e => e.preventDefault()} autoComplete="off">
+    <form
+      className="w-full mb-10"
+      onSubmit={handleSubmit}
+      autoComplete="off"
+    >
       <div className="flex flex-col sm:flex-row items-stretch gap-3 relative">
         <div className="relative flex-1">
           <input
@@ -104,10 +118,16 @@ export default function SearchBar({
             }}
             onBlur={handleBlur}
           />
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-green-300 w-7 h-7" />
+          <button
+            type="submit"
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-green-500 hover:bg-green-600 text-white rounded-full p-2 transition shadow animate-fade-in"
+            aria-label="Search"
+          >
+            <Search className="w-6 h-6" />
+          </button>
           {/* Autocomplete dropdown */}
           {showDropdown && suggestions.length > 0 && (
-            <ul className="absolute left-0 mt-1 bg-black/95 border border-white/20 backdrop-blur-2xl rounded-2xl shadow-lg w-full z-40 max-h-64 overflow-y-auto text-base">
+            <ul className="absolute left-0 mt-1 bg-black/95 border border-white/20 backdrop-blur-2xl rounded-2xl shadow-lg w-full z-40 max-h-64 overflow-y-auto text-base animate-fade-in">
               {suggestions.map((s, i) => (
                 <li
                   key={s + i}
