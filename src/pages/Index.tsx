@@ -1,21 +1,25 @@
 
 import { useNavigate } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { LogIn } from "lucide-react";
-// Logo icon, you could swap this for a plant icon or a local image
+
+// Planty background and logo
 const leavesIcon = "/lovable-uploads/05906f64-8b32-4737-a074-8f373f371349.png";
 const bgImage = "/lovable-uploads/57e20818-f97d-4a73-ba99-7f6eedf5d5f9.png";
+
+// Reference green from screenshot (#18c964)
+const brightGreen = "#18c964";
 
 const Index = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState<any>(null);
 
   // Auth form states
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [mode, setMode] = useState<"login" | "signup">("signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -99,36 +103,62 @@ const Index = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-x-hidden bg-no-repeat bg-cover"
+    <div 
+      className="relative min-h-screen flex items-center justify-center bg-no-repeat bg-cover"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundPosition: "center",
       }}
     >
-      {/* glass-colored overlay */}
-      <div className="absolute inset-0 z-0 bg-black/70" />
-      {/* Centered glass card */}
-      <div className="relative z-10 flex flex-col w-full max-w-md mx-auto px-2 py-16 min-h-[95vh] justify-center items-center">
-        <div className="w-full rounded-3xl bg-white/65 dark:bg-[#26311E]/80 backdrop-blur-xl shadow-2xl border border-white/30 dark:border-[#274021]/60 px-6 pt-12 pb-8 flex flex-col items-center animate-fade-in"
+      {/* BG Blur & dark overlay */}
+      <div className="absolute inset-0 z-0" style={{
+        background: "rgba(13,36,18,0.62)",
+        backdropFilter: "blur(7px)",
+        WebkitBackdropFilter: "blur(7px)"
+      }} />
+
+      {/* Glass card */}
+      <div className="relative z-10 w-full max-w-md mx-auto flex flex-col justify-center items-center min-h-[94vh]">
+        <div className="w-full rounded-3xl shadow-2xl px-8 pt-10 pb-6 flex flex-col items-center"
           style={{
+            background: "rgba(255,255,255,0.13)",
+            border: "2px solid rgba(255,255,255,0.22)",
             boxShadow:
-              "0 4px 36px 0 rgba(52,89,68,0.12), 0 1.5px 18px 0 rgba(58,90,64,0.07)",
+              "0 4px 36px 0 rgba(52,89,68,0.08), 0 2px 14px 0 rgba(58,90,64,0.13)"
           }}
         >
           {/* Logo and heading */}
-          <img alt="Sproutsly logo" src={leavesIcon} className="w-16 h-16 mb-4" />
-          <h1 className="font-extrabold text-5xl text-green-800 dark:text-green-200 mb-3 text-center tracking-tight select-none drop-shadow-md" style={{fontFamily:'Nunito, sans-serif'}}>
+          <img alt="Sproutsly logo" src={leavesIcon} className="w-12 h-12 mb-3" />
+          <h1
+            className="font-extrabold text-5xl mb-2 text-center tracking-tighter select-none drop-shadow"
+            style={{
+              color: brightGreen,
+              fontFamily: 'Nunito, sans-serif',
+              textShadow: "0 2px 10px #02411e22"
+            }}
+          >
             Sproutsly
           </h1>
-          <div className="text-lg sm:text-xl font-semibold text-green-700 dark:text-green-200 mb-7 mt-1 text-center max-w-xs">
+          <div className="text-xl sm:text-2xl font-semibold mb-5 mt-1 text-center max-w-xs"
+              style={{ color: '#2c652e' }}
+          >
             Swap, give, or sell plants—right in your neighborhood.
           </div>
-          {/* Sign in */}
+          
+          {/* Auth Form */}
           {!session && (
-            <form autoComplete="off" className="w-full flex flex-col items-center gap-5" onSubmit={handleAuth}>
-              <div className="flex flex-col items-center -mt-2">
-                <LogIn className="w-7 h-7 text-green-500 mb-1" />
-                <span className="font-semibold text-green-500 mb-1">
+            <form
+              autoComplete="off"
+              className="w-full flex flex-col items-center gap-5"
+              onSubmit={handleAuth}
+            >
+              <div className="flex flex-col items-center -mt-2 mb-2">
+                <LogIn className="w-6 h-6" style={{ color: brightGreen }} />
+                <span
+                  className="font-semibold mb-1 text-lg cursor-pointer"
+                  style={{ color: brightGreen }}
+                  onClick={() => setMode(mode === "login" ? "signup" : "login")}
+                >
                   {mode === "login" ? "Sign In" : "Sign Up"}
                 </span>
               </div>
@@ -137,7 +167,7 @@ const Index = () => {
                   <Input
                     type="text"
                     placeholder="First name"
-                    className="bg-zinc-100 dark:bg-zinc-900/75 border border-green-200 dark:border-green-800/60 text-green-900 dark:text-green-100"
+                    className="bg-white/95 border border-[#b8f5c0] rounded-lg text-[#193e17] focus:ring-2 focus:ring-[#18c964] shadow-none font-semibold placeholder:font-normal"
                     value={firstName}
                     required
                     disabled={loading}
@@ -147,7 +177,7 @@ const Index = () => {
                   <Input
                     type="text"
                     placeholder="Last name"
-                    className="bg-zinc-100 dark:bg-zinc-900/75 border border-green-200 dark:border-green-800/60 text-green-900 dark:text-green-100"
+                    className="bg-white/95 border border-[#b8f5c0] rounded-lg text-[#193e17] focus:ring-2 focus:ring-[#18c964] shadow-none font-semibold placeholder:font-normal"
                     value={lastName}
                     required
                     disabled={loading}
@@ -158,7 +188,7 @@ const Index = () => {
               <Input
                 type="email"
                 placeholder="Email"
-                className="bg-zinc-900/95 border-none focus:ring-2 focus:ring-green-400 text-green-100 placeholder:text-green-200/60 transition"
+                className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-300/60 rounded-lg shadow-none"
                 value={email}
                 required
                 disabled={loading}
@@ -169,18 +199,24 @@ const Index = () => {
               <Input
                 type="password"
                 placeholder="Password"
-                className="bg-zinc-900/95 border-none focus:ring-2 focus:ring-green-400 text-green-100 placeholder:text-green-200/60 transition"
+                className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-300/60 rounded-lg shadow-none"
                 value={password}
                 required
                 disabled={loading}
                 onChange={e => setPassword(e.target.value)}
                 autoComplete={mode === "login" ? "current-password" : "new-password"}
               />
-              {error && <div className="w-full text-red-400 text-sm text-center -mt-3">{error}</div>}
+              {error && <div className="w-full text-red-500 text-sm text-center -mt-3">{error}</div>}
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-12 font-bold text-lg bg-green-500 hover:bg-green-600 shadow-lg rounded-xl transition-all">
+                className="w-full h-12 font-bold text-lg rounded-xl transition-all"
+                style={{
+                  backgroundColor: brightGreen,
+                  color: "#fff",
+                  boxShadow: "0 2px 16px 0 #15ba5b2b"
+                }}
+              >
                 {loading
                   ? mode === "login"
                     ? "Signing in..."
@@ -191,7 +227,10 @@ const Index = () => {
               </Button>
               <button
                 type="button"
-                className="mt-1 text-green-400 hover:text-green-500 transition underline underline-offset-4 text-base w-full text-center"
+                className="mt-1 transition text-base w-full text-center font-medium underline underline-offset-4"
+                style={{
+                  color: brightGreen
+                }}
                 onClick={() => setMode(mode === "login" ? "signup" : "login")}
               >
                 {mode === "login"
@@ -200,13 +239,19 @@ const Index = () => {
               </button>
             </form>
           )}
+
           {/* Why Sproutsly */}
-          <div className="mt-10 w-full flex flex-col items-center">
-            <h3 className="text-2xl font-bold text-green-800 dark:text-green-100 mb-4 text-center drop-shadow-sm">
+          <div className="mt-8 w-full flex flex-col items-center">
+            <h3
+              className="text-2xl font-bold mb-3 text-center"
+              style={{ color: "#2c652e"}}
+            >
               Why Sproutsly?
             </h3>
-            <ul className="text-green-800 dark:text-green-100/90 mb-2 text-base space-y-3">
-              <li>🌿 Swap, give, or sell plants with neighbors easily</li>
+            <ul className="mb-1 text-base space-y-3"
+                style={{ color: "#224421" }}
+            >
+              <li>🌱 Swap, give, or sell plants with neighbors easily</li>
               <li>📷 Share photos and tips about your plant babies</li>
               <li>🧑‍🌾 Join a green community, learn and grow together</li>
               <li>🔍 Discover rare finds near you</li>
