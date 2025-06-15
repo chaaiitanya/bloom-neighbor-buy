@@ -73,22 +73,7 @@ export default function Dashboard() {
             />
           </div>
         </div>
-        <div className="w-full flex justify-center mt-12">
-          {/* Post Plant call-to-action */}
-          <div className="bg-green-100 border border-green-300 rounded-2xl px-6 py-6 flex flex-col items-center shadow-sm max-w-sm w-full">
-            <span className="text-green-900 font-semibold text-center text-base mb-2">
-              Want to sell or give away a plant?
-            </span>
-            {/* Insert the functional PostPlantForm */}
-            <div className="w-full mt-2">
-              <PostPlantForm
-                afterPost={() => {
-                  window.location.reload();
-                }}
-              />
-            </div>
-          </div>
-        </div>
+        {/* Removed the PostPlantForm call-to-action card here */}
       </div>
     </main>
   );
