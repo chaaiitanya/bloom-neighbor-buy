@@ -61,7 +61,8 @@ export default function DashboardPlantList({
     setLoading(true);
     setError(null);
 
-    async function fetchPlants() {
+    async function fetchPlantsWithProfileNames() {
+      // Step 1: Get ALL plants as before. No join, keep fast.
       let { data, error } = await supabase
         .from("plants")
         .select(`
@@ -87,7 +88,27 @@ export default function DashboardPlantList({
         return;
       }
 
-      // Convert plant data
+      // Step 2: Collect unique seller IDs
+      const userIds = Array.from(
+        new Set(data.map((plant: any) => plant.user_id).filter(Boolean))
+      );
+      // Step 3: Fetch seller profiles in one batch (id, full_name)
+      let profileMap: Record<string, string> = {};
+      if (userIds.length > 0) {
+        const { data: profiles, error: profileErr } = await supabase
+          .from("profiles")
+          .select("id, full_name")
+          .in("id", userIds);
+
+        if (profiles && !profileErr) {
+          // Map id to full_name
+          for (const profile of profiles) {
+            profileMap[profile.id] = profile.full_name || null;
+          }
+        }
+      }
+
+      // Step 4: Map plants adding correct seller name
       const transformed: PlantRaw[] = data.map((plant: any) => ({
         id: plant.id,
         name: plant.name,
@@ -96,15 +117,18 @@ export default function DashboardPlantList({
         distance: "—",
         location: plant.location ?? "Unlisted",
         sellerId: plant.user_id,
-        // Fallback to short user_id
-        seller: plant.user_id ? plant.user_id.slice(0, 6) : "Unknown",
+        // Use profile name if exists, fallback to user id
+        seller:
+          (plant.user_id && profileMap[plant.user_id]) ||
+          (plant.user_id ? plant.user_id.slice(0, 6) : "Unknown"),
         type: "all",
       }));
+
       setPlants(transformed);
       setLoading(false);
     }
 
-    fetchPlants();
+    fetchPlantsWithProfileNames();
   }, []);
 
   // Filtering logic
