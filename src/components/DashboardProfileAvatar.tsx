@@ -16,6 +16,8 @@ export default function DashboardProfileAvatar() {
   const [user, setUser] = useState<any>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
   const [profileAvatar, setProfileAvatar] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState<string | null>(null);
+  const [lastName, setLastName] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,16 +29,20 @@ export default function DashboardProfileAvatar() {
       if (data.user?.id) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("full_name, avatar_url")
+          .select("full_name, avatar_url, first_name, last_name")
           .eq("id", data.user.id)
           .maybeSingle();
 
         if (profile) {
           setProfileName(profile.full_name || null);
           setProfileAvatar(profile.avatar_url || null);
+          setFirstName(profile.first_name || null);
+          setLastName(profile.last_name || null);
         } else {
           setProfileName(null);
           setProfileAvatar(null);
+          setFirstName(null);
+          setLastName(null);
         }
       }
     });
@@ -49,6 +55,7 @@ export default function DashboardProfileAvatar() {
 
   // Use fetched profile name first, fallback to metadata/email/User
   const displayName =
+    (firstName && lastName && `${firstName} ${lastName}`) ||
     profileName ||
     user?.user_metadata?.full_name ||
     user?.email ||
@@ -59,10 +66,7 @@ export default function DashboardProfileAvatar() {
     profileAvatar ||
     user?.user_metadata?.avatar_url ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      profileName ||
-      user?.user_metadata?.full_name ||
-      user?.email ||
-      "User"
+      displayName
     )}&size=128&background=BBF7D0&color=047857&font-size=0.45`;
 
   return (

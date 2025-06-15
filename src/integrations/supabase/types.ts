@@ -121,8 +121,10 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string | null
+          first_name: string | null
           full_name: string | null
           id: string
+          last_name: string | null
           location: string | null
           qr_code_url: string | null
           rating: number | null
@@ -133,8 +135,10 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
+          first_name?: string | null
           full_name?: string | null
           id: string
+          last_name?: string | null
           location?: string | null
           qr_code_url?: string | null
           rating?: number | null
@@ -145,8 +149,10 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
+          first_name?: string | null
           full_name?: string | null
           id?: string
+          last_name?: string | null
           location?: string | null
           qr_code_url?: string | null
           rating?: number | null

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +10,8 @@ import { LogIn } from "lucide-react";
 export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -81,11 +84,22 @@ export default function Auth() {
       }
     } else {
       // Signup mode (with emailRedirectTo as required for Supabase)
+      if (!firstName.trim() || !lastName.trim()) {
+        setError("Please enter your first and last name.");
+        setLoading(false);
+        return;
+      }
       const redirectUrl = `${window.location.origin}/`;
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: redirectUrl },
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            first_name: firstName.trim(),
+            last_name: lastName.trim(),
+          },
+        },
       });
       if (error) {
         setError(error.message);
@@ -116,6 +130,31 @@ export default function Auth() {
           </span>
         </div>
         <form autoComplete="off" className="flex flex-col gap-5" onSubmit={handleAuth}>
+          {mode === "signup" && (
+            <>
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  placeholder="First name"
+                  className="bg-zinc-900 border-green-800/50 text-green-200"
+                  value={firstName}
+                  required
+                  disabled={loading}
+                  onChange={e => setFirstName(e.target.value)}
+                  autoFocus
+                />
+                <Input
+                  type="text"
+                  placeholder="Last name"
+                  className="bg-zinc-900 border-green-800/50 text-green-200"
+                  value={lastName}
+                  required
+                  disabled={loading}
+                  onChange={e => setLastName(e.target.value)}
+                />
+              </div>
+            </>
+          )}
           <Input
             type="email"
             placeholder="Email"
@@ -123,7 +162,7 @@ export default function Auth() {
             value={email}
             required
             onChange={e => setEmail(e.target.value)}
-            autoFocus
+            autoFocus={mode === "login"}
           />
           <Input
             type="password"
