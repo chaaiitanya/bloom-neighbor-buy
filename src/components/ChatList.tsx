@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
@@ -14,6 +13,7 @@ type ChatSummary = {
     username: string | null;
     full_name: string | null;
     avatar_url: string | null;
+    email: string | null;
   };
   latestMessage: {
     content: string;
@@ -38,7 +38,6 @@ export default function ChatList() {
   useEffect(() => {
     if (!myUserId) return;
     setLoading(true);
-    // Get all private chats for this user
     (async () => {
       // 1. Fetch chats
       let { data: chatsRaw, error: chatsError } = await supabase
@@ -57,12 +56,24 @@ export default function ChatList() {
       const chatSummaries: ChatSummary[] = await Promise.all(
         chatsRaw.map(async (chat: any) => {
           const otherId = chat.participant_a === myUserId ? chat.participant_b : chat.participant_a;
-          // Fetch other participant profile
+          
+          // Fetch profile (ensure we get email as last fallback)
           let { data: profile, error: profileError } = await supabase
             .from("profiles")
             .select("id,username,full_name,avatar_url")
             .eq("id", otherId)
-            .single();
+            .maybeSingle();
+
+          // Fetch user email from auth (if missing from profile)
+          let email = null;
+          if (profile?.id) {
+            // Try to get email from profiles table (customize this if you ever sync emails to profiles)
+            // For now, as a fallback, call auth.getUser() if display name is missing
+            // Unfortunately, the API does not let us call auth.getUser() for other users for security reasons
+            // So, fallback: At least return null, or show partial user Id
+            email = null;
+          }
+
           // Fetch latest message
           let { data: latestMsg } = await supabase
             .from("private_messages")
@@ -78,6 +89,7 @@ export default function ChatList() {
               username: profile?.username ?? null,
               full_name: profile?.full_name ?? null,
               avatar_url: profile?.avatar_url ?? null,
+              email: email,
             },
             latestMessage: latestMsg
               ? { content: latestMsg.content, sent_at: latestMsg.sent_at }
@@ -130,35 +142,44 @@ export default function ChatList() {
   return (
     <>
       <div className="w-full max-w-lg px-2 sm:px-0 flex flex-col gap-2">
-        {chats?.map(chat => (
-          <button
-            key={chat.id}
-            onClick={() => setActiveChat(chat)}
-            className="flex items-center gap-4 bg-white rounded-xl px-4 py-3 hover:shadow border border-green-50 transition active:bg-green-50"
-            aria-label={`Open chat with ${chat.participant.full_name || chat.participant.username || "User"}`}
-          >
-            <img
-              src={
-                chat.participant.avatar_url ||
-                "https://ui-avatars.com/api/?name=" +
-                  encodeURIComponent(chat.participant.full_name || chat.participant.username || "U")
-              }
-              alt={chat.participant.full_name || chat.participant.username || "User"}
-              className="w-12 h-12 rounded-full object-cover border-2 border-green-100 bg-green-50"
-            />
-            <div className="flex flex-col flex-1 min-w-0 text-left">
-              <span className="font-semibold text-green-800 truncate">
-                {chat.participant.full_name || chat.participant.username || "User"}
+        {chats?.map(chat => {
+          // Compose a displayName variable with strong fallback logic
+          const displayName =
+            chat.participant.full_name ||
+            chat.participant.username ||
+            chat.participant.email ||
+            (chat.participant.id ? "User " + chat.participant.id.slice(0, 6) : "User");
+
+          return (
+            <button
+              key={chat.id}
+              onClick={() => setActiveChat(chat)}
+              className="flex items-center gap-4 bg-white rounded-xl px-4 py-3 hover:shadow border border-green-50 transition active:bg-green-50"
+              aria-label={`Open chat with ${displayName}`}
+            >
+              <img
+                src={
+                  chat.participant.avatar_url ||
+                  "https://ui-avatars.com/api/?name=" +
+                    encodeURIComponent(displayName)
+                }
+                alt={displayName}
+                className="w-12 h-12 rounded-full object-cover border-2 border-green-100 bg-green-50"
+              />
+              <div className="flex flex-col flex-1 min-w-0 text-left">
+                <span className="font-semibold text-green-800 truncate">
+                  {displayName}
+                </span>
+                <span className="text-xs text-gray-500 truncate mt-0.5">
+                  {chat.latestMessage ? chat.latestMessage.content : <span className="italic text-gray-300">No messages yet</span>}
+                </span>
+              </div>
+              <span className="text-xs text-gray-400 ml-2">
+                {chat.latestMessage ? new Date(chat.latestMessage.sent_at).toLocaleDateString() : ""}
               </span>
-              <span className="text-xs text-gray-500 truncate mt-0.5">
-                {chat.latestMessage ? chat.latestMessage.content : <span className="italic text-gray-300">No messages yet</span>}
-              </span>
-            </div>
-            <span className="text-xs text-gray-400 ml-2">
-              {chat.latestMessage ? new Date(chat.latestMessage.sent_at).toLocaleDateString() : ""}
-            </span>
-          </button>
-        ))}
+            </button>
+          );
+        })}
       </div>
       {/* Chat dialog */}
       <Dialog open={!!activeChat} onOpenChange={open => !open && setActiveChat(null)}>
@@ -166,7 +187,14 @@ export default function ChatList() {
           <DialogHeader>
             <div className="flex gap-3 py-3 px-4 items-center border-b border-green-50 bg-green-50 rounded-t-xl">
               <ProfilePreview
-                name={activeChat?.participant.full_name || activeChat?.participant.username || "User"}
+                name={
+                  activeChat?.participant.full_name ||
+                  activeChat?.participant.username ||
+                  activeChat?.participant.email ||
+                  (activeChat?.participant.id
+                    ? "User " + activeChat.participant.id.slice(0, 6)
+                    : "User")
+                }
                 avatar={activeChat?.participant.avatar_url}
               />
               <span className="ml-auto text-xs text-gray-400">
