@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import PlantImageUpload from "@/components/PlantImageUpload";
 import { useStaticCityAutocomplete } from "@/hooks/useStaticCityAutocomplete";
 import { useUserLocationCity } from "@/hooks/useUserLocationCity";
+import MultiImageUpload from "@/components/MultiImageUpload";
 
 type PostPlantFormProps = {
   afterPost?: () => void;
@@ -24,12 +25,12 @@ const getMapboxToken = async (): Promise<string | null> => {
 };
 
 export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  // Photos array state!
+  const [photos, setPhotos] = useState<string[]>([]);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
   // Use static autocomplete hook for city/location
   const {
@@ -73,9 +74,15 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !price || !description.trim() || !location.trim()) {
+    if (
+      !name.trim() ||
+      !price ||
+      !description.trim() ||
+      !location.trim() ||
+      photos.length === 0
+    ) {
       toast({
-        title: "Please fill all fields.",
+        title: "Please fill all fields and upload at least 1 image.",
         variant: "destructive",
       });
       return;
@@ -89,46 +96,72 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
       setSubmitting(false);
       return;
     }
-    // Use either uploaded photoUrl, or fallback placeholder
-    const photo_url = imagePreview || "/placeholder.svg";
 
-    const { error } = await supabase.from("plants").insert({
-      user_id,
-      photo_url,
-      name,
-      price: Number(price) || 0,
-      description,
-      location,
-    });
+    // Insert main plant entry (use first photo as primary)
+    const { data: insertPlant, error } = await supabase
+      .from("plants")
+      .insert({
+        user_id,
+        photo_url: photos[0], // main image for legacy use
+        name,
+        price: Number(price) || 0,
+        description,
+        location,
+      })
+      .select()
+      .single();
 
-    if (error) {
+    if (error || !insertPlant) {
       toast({
         title: "Could not post plant.",
-        description: error.message,
+        description: error?.message,
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Plant posted!",
-        description: "Your plant is now listed.",
+      setSubmitting(false);
+      return;
+    }
+
+    // Insert all images into plant_photos
+    let failed = false;
+    for (let i = 0; i < photos.length; i++) {
+      const { error: photoErr } = await supabase.from("plant_photos").insert({
+        plant_id: insertPlant.id,
+        photo_url: photos[i],
+        position: i,
       });
-      if (afterPost) {
-        afterPost();
-      } else {
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 800);
+      if (photoErr) {
+        failed = true;
+        // We continue to insert the rest, but only show toast at end
       }
+    }
+
+    toast({
+      title: failed
+        ? "Plant posted but some images failed to link."
+        : "Plant posted!",
+      description: failed
+        ? "Not all images may appear. Please try editing your listing to fix."
+        : "Your plant is now listed.",
+      variant: failed ? "destructive" : undefined,
+    });
+
+    if (afterPost) {
+      afterPost();
+    } else {
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 800);
     }
     setSubmitting(false);
   };
 
   return (
     <form className="p-6 space-y-5" onSubmit={handleSubmit}>
-      <PlantImageUpload
-        preview={imagePreview}
-        setPreview={setImagePreview}
+      <MultiImageUpload
+        images={photos}
+        setImages={setPhotos}
         disabled={submitting}
+        maxImages={10}
       />
       <div>
         <label className="block text-green-800 dark:text-green-100 font-semibold mb-1">Name</label>

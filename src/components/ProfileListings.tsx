@@ -3,7 +3,15 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Loader2, Edit, Trash2 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription, DialogClose } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+  DialogClose
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,12 +27,15 @@ type Plant = {
   created_at?: string;
 };
 
+// Adapt to fetch plant_photos and show full gallery/cover photo.
+type PlantWithPhotos = Plant & { photos: string[] };
+
 export default function ProfileListings() {
-  const [plants, setPlants] = useState<Plant[]>([]);
+  const [plants, setPlants] = useState<PlantWithPhotos[]>([]);
   const [loading, setLoading] = useState(true);
   // State for Edit dialog
   const [editOpen, setEditOpen] = useState(false);
-  const [editingPlant, setEditingPlant] = useState<Plant | null>(null);
+  const [editingPlant, setEditingPlant] = useState<PlantWithPhotos | null>(null);
   const [editForm, setEditForm] = useState({
     name: "",
     price: "",
@@ -34,19 +45,40 @@ export default function ProfileListings() {
   });
   // State for Delete confirmation
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deletingPlant, setDeletingPlant] = useState<Plant | null>(null);
+  const [deletingPlant, setDeletingPlant] = useState<PlantWithPhotos | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const fetchListings = async () => {
     setLoading(true);
     const { data: userRes } = await supabase.auth.getUser();
     if (userRes?.user) {
+      // Fetch plants for this user
       const { data, error } = await supabase
         .from("plants")
         .select("*")
         .eq("user_id", userRes.user.id)
         .order("created_at", { ascending: false });
-      if (!error && data) setPlants(data as Plant[]);
+
+      const rawPlants: Plant[] = (data as Plant[]) || [];
+
+      // For each plant, fetch up to 10 photos
+      const newPlants: PlantWithPhotos[] = [];
+      for (const plant of rawPlants) {
+        const { data: photoRows } = await supabase
+          .from("plant_photos")
+          .select("photo_url,position")
+          .eq("plant_id", plant.id)
+          .order("position", { ascending: true });
+
+        let photos: string[] = [];
+        if (photoRows && photoRows.length) {
+          photos = photoRows.map((r: any) => r.photo_url);
+        } else if (plant.photo_url) {
+          photos = [plant.photo_url];
+        }
+        newPlants.push({ ...plant, photos });
+      }
+      setPlants(newPlants);
     }
     setLoading(false);
   };
@@ -56,20 +88,21 @@ export default function ProfileListings() {
     // eslint-disable-next-line
   }, []);
 
-  // Open the edit dialog, pre-fill form
-  const handleEditClick = (plant: Plant) => {
+  // Open edit dialog - pre-fill photos for editForm!
+  const handleEditClick = async (plant: PlantWithPhotos) => {
+    // Fetch photos if not already loaded (should be)
     setEditingPlant(plant);
     setEditForm({
       name: plant.name ?? "",
       price: plant.price?.toString() ?? "",
       location: plant.location ?? "",
       description: plant.description ?? "",
-      photo_url: plant.photo_url ?? "",
+      photo_url: plant.photos[0] || "",
     });
     setEditOpen(true);
   };
 
-  // Update plant in DB
+  // Update plant in DB (main data only, not images here)
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingPlant) return;
@@ -98,13 +131,14 @@ export default function ProfileListings() {
   };
 
   // Delete logic
-  const handleDeleteClick = (plant: Plant) => {
+  const handleDeleteClick = (plant: PlantWithPhotos) => {
     setDeletingPlant(plant);
     setDeleteOpen(true);
   };
   const handleDelete = async () => {
     if (!deletingPlant) return;
     setSubmitting(true);
+    // Delete plant record (cascade will delete plant_photos too)
     const { error } = await supabase.from("plants").delete().eq("id", deletingPlant.id);
     setSubmitting(false);
     if (error) {
@@ -152,9 +186,9 @@ export default function ProfileListings() {
                 </button>
               </div>
               <div className="h-40 w-full bg-green-50 dark:bg-[#232a26] rounded-lg mb-2 overflow-hidden flex items-center justify-center">
-                {plant.photo_url ? (
+                {plant.photos?.length ? (
                   <img
-                    src={plant.photo_url}
+                    src={plant.photos[0]}
                     alt={plant.name}
                     className="object-cover w-full h-full"
                   />
@@ -184,6 +218,7 @@ export default function ProfileListings() {
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleEditSubmit} className="space-y-4 mt-2">
+            {/* ... standard edit fields only for now, not images ... */}
             <div>
               <label className="block text-green-900 font-semibold mb-1">Name</label>
               <Input
@@ -255,4 +290,3 @@ export default function ProfileListings() {
     </div>
   );
 }
-

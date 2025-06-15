@@ -30,6 +30,38 @@ export type Database = {
         }
         Relationships: []
       }
+      plant_photos: {
+        Row: {
+          created_at: string
+          id: string
+          photo_url: string
+          plant_id: string
+          position: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          photo_url: string
+          plant_id: string
+          position?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          photo_url?: string
+          plant_id?: string
+          position?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plant_photos_plant_id_fkey"
+            columns: ["plant_id"]
+            isOneToOne: false
+            referencedRelation: "plants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plants: {
         Row: {
           created_at: string
