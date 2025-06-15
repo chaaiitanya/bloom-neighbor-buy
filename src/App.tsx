@@ -27,7 +27,6 @@ const App = () => (
           <Route path="/chat" element={<Chat />} />
           <Route path="/post" element={<Post />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/community" element={<Community />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
