@@ -9,7 +9,6 @@ import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import Chat from "./pages/Chat";
 import Post from "./pages/Post";
-import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import { ThemeProvider } from "next-themes";
 
@@ -24,7 +23,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
+            {/* Removed the /auth route because Auth page has been deleted */}
             <Route path="/profile" element={<Profile />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/post" element={<Post />} />
@@ -39,4 +38,3 @@ const App = () => (
 );
 
 export default App;
-
