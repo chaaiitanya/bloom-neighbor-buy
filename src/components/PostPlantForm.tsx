@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import PlantImageUpload from "@/components/PlantImageUpload";
-import { useCityAutocomplete } from "@/hooks/useCityAutocomplete";
+import { useStaticCityAutocomplete } from "@/hooks/useStaticCityAutocomplete";
 
 type PostPlantFormProps = {
   afterPost?: () => void;
@@ -29,7 +29,7 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Use autocomplete hook for city/location
+  // Use static autocomplete hook for city/location
   const {
     cityInput: location,
     setCityInput: setLocation,
@@ -40,7 +40,7 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
     handleInputChange,
     handleSuggestionClick,
     handleBlur,
-  } = useCityAutocomplete();
+  } = useStaticCityAutocomplete();
 
   const locationInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -141,7 +141,7 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
         <Input
           type="text"
           className="bg-white"
-          placeholder="Enter your city (e.g. Mumbai, London,...)"
+          placeholder="Enter your city (e.g. Dallas, Mumbai, London,...)"
           value={location}
           onChange={e => handleInputChange(e.target.value)}
           required
