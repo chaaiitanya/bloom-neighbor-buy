@@ -83,14 +83,25 @@ export default function Dashboard() {
     <main className="min-h-screen flex flex-col items-center bg-gradient-to-br from-green-100/70 via-white/90 to-green-50/70 px-1 sm:px-4 lg:px-0 pb-16 relative">
       {/* Main glass-card wrapper */}
       <div className="w-full max-w-5xl flex flex-col gap-8 mt-8 pb-24">
-        {/* Header Card: Avatar + Post Plant */}
+        {/* Header Card: Avatar + Sproutsly symbol + Post Plant */}
         <div className="flex justify-between items-start w-full px-0">
           <div className="flex-1">
             <div className="backdrop-blur-sm bg-white/80 shadow-2xl border border-green-100/60 rounded-3xl flex items-center gap-4 py-4 pl-5 pr-3 sm:pl-8 sm:pr-4 ring-1 ring-white/30
               transition-all duration-300 hover:scale-105 hover:shadow-green-200/50 hover:ring-2 hover:ring-green-200/70">
+              {/* Avatar (left) */}
               <DashboardProfileAvatar />
-              <div className="flex-1 min-w-[1px]" />
-              {/* Post plant button appears to the right */}
+
+              {/* Center Sproutsly symbol */}
+              <div className="flex-1 flex justify-center items-center pointer-events-none select-none">
+                <span className="rounded-full bg-green-600/90 shadow-lg ring-2 ring-white/60 border-2 border-green-300/40 p-2 sm:p-2.5 backdrop-blur-md flex items-center justify-center animate-fade-in">
+                  {/* Leaf/Sprout Lucide icon */}
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.5 22c2.5-8.5-2-13-7.5-15.63M15.5 22c-2.5-8.5 2-13 7.5-15.63M12 7c.35 2.2 2.34 4 5 4 2.21 0 4-1.79 4-4C21 3.13 17.5 2 15.5 2c-1.51 0-3.34.74-4.5 2C10.34 2.74 8.51 2 7 2 5 2 1.5 3.13 1.5 7c0 2.21 1.79 4 4 4 2.66 0 4.65-1.8 5-4Z"/>
+                  </svg>
+                </span>
+              </div>
+
+              {/* Post Plant button (right) */}
               <Sheet open={isPostSheetOpen} onOpenChange={setIsPostSheetOpen}>
                 <SheetTrigger asChild>
                   <Button
