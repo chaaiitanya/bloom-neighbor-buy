@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useUserLocationCity } from "@/hooks/useUserLocationCity";
 import { toast } from "@/components/ui/use-toast";
+import BottomTabNav from "@/components/BottomTabNav"; // ADDED
 
 function getQueryParam(searchString: string, key: string) {
   const params = new URLSearchParams(searchString);
@@ -132,6 +134,7 @@ export default function Dashboard() {
         </div>
         {/* Removed the PostPlantForm call-to-action card here */}
       </div>
+      <BottomTabNav />
     </main>
   );
 }
