@@ -1,16 +1,12 @@
-
 import ChatList from "@/components/ChatList";
 import BottomTabNav from "@/components/BottomTabNav";
 import CommunityChatBox from "@/components/CommunityChatBox";
 import CommunityChatCard from "@/components/CommunityChatCard";
 import { MessagesSquare } from "lucide-react";
 import { useState } from "react";
-
 export default function Chat() {
   const [openCommunity, setOpenCommunity] = useState(false);
-
-  return (
-    <div className="min-h-screen flex flex-col pb-20 bg-gradient-to-br from-green-50 to-white dark:bg-gradient-to-br dark:from-[#181f1a] dark:to-[#232a26]/80 transition-colors">
+  return <div className="min-h-screen flex flex-col pb-20 bg-gradient-to-br from-green-50 to-white dark:bg-gradient-to-br dark:from-[#181f1a] dark:to-[#232a26]/80 transition-colors">
       <h2 className="pt-10 pb-6 text-center text-green-800 dark:text-green-100 font-extrabold text-2xl tracking-tighter">Conversations</h2>
       <div className="flex-1 flex items-start justify-center">
         <div className="w-full max-w-xl flex flex-col items-center">
@@ -25,21 +21,12 @@ export default function Chat() {
         </div>
       </div>
       {/* Community Communication Section */}
-      <div className="w-full flex flex-col gap-3 items-center py-14 px-5 border-t border-green-100 bg-green-50/50 dark:bg-[#232a26]/60 transition-colors">
-        <MessagesSquare className="w-10 h-10 text-green-600 dark:text-green-300 drop-shadow" />
-        <h3 className="text-lg font-bold text-green-700 dark:text-green-100">Community Communication</h3>
-        <p className="text-center text-green-900/80 dark:text-green-200/80 max-w-sm text-sm">
-          Welcome to the Bloom Neighbor Community! Here, you can communicate with other users, exchange tips, and build your plant network.
-        </p>
-      </div>
-      {openCommunity && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/30 px-2 transition-all">
+      
+      {openCommunity && <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/30 px-2 transition-all">
           <div className="bg-white dark:bg-[#21271f] p-0 rounded-xl shadow-lg max-w-lg w-full">
             <CommunityChatBox onClose={() => setOpenCommunity(false)} />
           </div>
-        </div>
-      )}
+        </div>}
       <BottomTabNav />
-    </div>
-  );
+    </div>;
 }
