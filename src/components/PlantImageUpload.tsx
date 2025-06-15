@@ -1,23 +1,55 @@
 
 import { useRef } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/use-toast";
 
 interface PlantImageUploadProps {
   preview: string | null;
   setPreview: (url: string | null) => void;
+  setImageFile?: (file: File | null) => void;
   disabled?: boolean;
 }
 
 export default function PlantImageUpload({
   preview,
   setPreview,
+  setImageFile,
   disabled,
 }: PlantImageUploadProps) {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) {
       const file = e.target.files[0];
+
+      // Provide preview
       setPreview(URL.createObjectURL(file));
+
+      // Upload to Supabase Storage
+      const fileExt = file.name.split(".").pop();
+      const randomName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `uploads/${randomName}`;
+      const { data, error } = await supabase.storage.from("plant-images").upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+      if (error) {
+        toast({
+          title: "Image upload failed",
+          description: error.message,
+          variant: "destructive",
+        });
+        setImageFile && setImageFile(null);
+        // Don’t update preview or photo_url
+        return;
+      }
+
+      // Get public URL
+      const { data: urlData } = supabase.storage.from("plant-images").getPublicUrl(filePath);
+      if (urlData?.publicUrl) {
+        setPreview(urlData.publicUrl);
+        setImageFile && setImageFile(null); // No need to keep file after upload
+      }
     }
   };
 

@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,6 +29,7 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
   // Use static autocomplete hook for city/location
   const {
@@ -89,6 +89,7 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
       setSubmitting(false);
       return;
     }
+    // Use either uploaded photoUrl, or fallback placeholder
     const photo_url = imagePreview || "/placeholder.svg";
 
     const { error } = await supabase.from("plants").insert({
@@ -124,7 +125,11 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
 
   return (
     <form className="p-6 space-y-5" onSubmit={handleSubmit}>
-      <PlantImageUpload preview={imagePreview} setPreview={setImagePreview} disabled={submitting} />
+      <PlantImageUpload
+        preview={imagePreview}
+        setPreview={setImagePreview}
+        disabled={submitting}
+      />
       <div>
         <label className="block text-green-800 font-semibold mb-1">Name</label>
         <Input
@@ -218,4 +223,3 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
     </form>
   );
 }
-
