@@ -37,7 +37,7 @@ export default function MultiImageUpload({
     for (const file of Array.from(files)) {
       // Show local preview instantly (optional, can be removed)
       const localUrl = URL.createObjectURL(file);
-      setImages((prev) => [...prev, localUrl]);
+      setImages([...images, localUrl]);
 
       // Upload
       const fileExt = file.name.split(".").pop();
@@ -57,14 +57,18 @@ export default function MultiImageUpload({
           description: error.message,
           variant: "destructive",
         });
-        setImages((prev) => prev.filter((img) => img !== localUrl));
+        // Remove the local preview if upload failed
+        setImages(images.filter((img) => img !== localUrl));
         continue;
       }
       const { data: urlData } = supabase.storage.from("plant-images").getPublicUrl(filePath);
       if (urlData?.publicUrl) {
-        setImages((prev) =>
-          prev.map((img, i) => (img === localUrl ? urlData.publicUrl : img))
+        const newImages = [...images, localUrl];
+        // Replace only the just-added localUrl with the uploaded public URL
+        const updatedImages = newImages.map((img) =>
+          img === localUrl ? urlData.publicUrl : img
         );
+        setImages(updatedImages);
       }
     }
     // Reset file input value so the same image can be uploaded again if needed
