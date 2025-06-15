@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { ProfilePreview } from "@/components/ProfilePreview";
 import BottomTabNav from "@/components/BottomTabNav";
@@ -103,16 +104,6 @@ export default function Profile() {
           )}
         </div>
 
-        {/* Logout Button */}
-        <Button
-          onClick={handleLogout}
-          variant="destructive"
-          className="w-full mb-8 flex gap-2 items-center py-3 rounded-2xl font-bold text-base text-red-700 dark:text-red-400 bg-red-100 dark:bg-[#232a26]/80 hover:bg-red-200 dark:hover:bg-[#232a26]/60 transition-all"
-        >
-          <LogOut className="w-5 h-5" />
-          Log out
-        </Button>
-
         {!editMode && (
           <>
             {/* Listings */}
@@ -133,6 +124,16 @@ export default function Profile() {
             </div>
           </>
         )}
+
+        {/* Logout Button as the last element */}
+        <Button
+          onClick={handleLogout}
+          variant="destructive"
+          className="w-full mt-8 mb-2 flex gap-2 items-center py-3 rounded-2xl font-bold text-base text-red-700 dark:text-red-400 bg-red-100 dark:bg-[#232a26]/80 hover:bg-red-200 dark:hover:bg-[#232a26]/60 transition-all"
+        >
+          <LogOut className="w-5 h-5" />
+          Log out
+        </Button>
       </div>
       <BottomTabNav />
     </div>
