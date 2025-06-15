@@ -8,6 +8,7 @@ import ProfileFavorites from "@/components/ProfileFavorites";
 import ProfileQrShare from "@/components/ProfileQrShare";
 import ProfileSocialLinks from "@/components/ProfileSocialLinks";
 import ProfileListings from "@/components/ProfileListings";
+import ProfileActionBar from "@/components/ProfileActionBar";
 import { supabase } from "@/integrations/supabase/client";
 
 type ProfileData = {
@@ -57,6 +58,7 @@ export default function Profile() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-50 to-white pb-20">
       <div className="p-6 flex flex-col items-center">
+        <ProfileActionBar />
         {loading ? (
           <div className="mb-2 h-12 w-32 rounded-full bg-green-100 animate-pulse" />
         ) : (
