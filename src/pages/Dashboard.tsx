@@ -80,25 +80,23 @@ export default function Dashboard() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center bg-gradient-to-br from-green-100/70 via-white/90 to-green-50/70 px-1 sm:px-4 lg:px-0 pb-16 relative">
+    <main className="min-h-screen flex flex-col items-center bg-gradient-to-br from-green-100/70 via-white/90 to-green-50/70 dark:bg-gradient-to-br dark:from-[#181f1a] dark:via-[#222b22]/90 dark:to-[#181f1a]/80 px-1 sm:px-4 lg:px-0 pb-16 relative transition-colors">
       {/* Main glass-card wrapper */}
       <div className="w-full max-w-5xl flex flex-col gap-8 mt-8 pb-24">
         {/* Header Card: Avatar + Sproutsly symbol + Post Plant */}
         <div className="flex justify-between items-start w-full px-0">
           <div className="flex-1">
-            <div className="backdrop-blur-sm bg-white/80 shadow-2xl border border-green-100/60 rounded-3xl flex items-center gap-4 py-4 pl-5 pr-3 sm:pl-8 sm:pr-4 ring-1 ring-white/30
+            <div className="backdrop-blur-sm bg-white/80 dark:bg-[#1b2321]/80 shadow-2xl border border-green-100/60 dark:border-[#223128]/70 rounded-3xl flex items-center gap-4 py-4 pl-5 pr-3 sm:pl-8 sm:pr-4 ring-1 ring-white/30
               transition-all duration-300 hover:scale-105 hover:shadow-green-200/50 hover:ring-2 hover:ring-green-200/70">
               {/* Avatar (left) */}
               <DashboardProfileAvatar />
-
               {/* Center Sproutsly symbol */}
               <div className="flex-1 flex justify-center items-center pointer-events-none select-none">
-                <span className="rounded-full bg-green-600/90 shadow-lg ring-2 ring-white/60 border-2 border-green-300/40 p-2 sm:p-2.5 backdrop-blur-md flex items-center justify-center text-2xl sm:text-3xl animate-fade-in">
+                <span className="rounded-full bg-green-600/90 dark:bg-green-800/70 shadow-lg ring-2 ring-white/60 border-2 border-green-300/40 dark:border-green-800 p-2 sm:p-2.5 backdrop-blur-md flex items-center justify-center text-2xl sm:text-3xl animate-fade-in">
                   {/* Sproutsly logo: just a leaf emoji */}
                   🍃
                 </span>
               </div>
-
               {/* Post Plant button (right) */}
               <Sheet open={isPostSheetOpen} onOpenChange={setIsPostSheetOpen}>
                 <SheetTrigger asChild>
@@ -126,7 +124,7 @@ export default function Dashboard() {
         </div>
 
         {/* Search + Filters Section Card */}
-        <div className="w-full backdrop-blur-sm bg-white/85 border border-green-100/60 rounded-3xl shadow-2xl ring-1 ring-white/20 py-7 px-4 sm:px-10 flex flex-col gap-5
+        <div className="w-full backdrop-blur-sm bg-white/85 dark:bg-[#202824]/80 border border-green-100/60 dark:border-[#222f25]/80 rounded-3xl shadow-2xl ring-1 ring-white/20 py-7 px-4 sm:px-10 flex flex-col gap-5
           transition-all duration-300 hover:scale-105 hover:ring-2 hover:ring-green-200/70 hover:shadow-green-100/60">
           <DashboardSearchBar value={search} onChange={setSearch} />
           {/* Category filters row */}
@@ -147,14 +145,14 @@ export default function Dashboard() {
         </div>
         {/* Section heading */}
         <div className="mt-1 px-2 w-full flex items-center justify-between">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-green-800/90 tracking-tight mb-1 drop-shadow-sm select-none">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-green-800/90 dark:text-green-100 tracking-tight mb-1 drop-shadow-sm select-none">
             🌿 Best in your area
           </h2>
           {/* Future sort/settings could go here */}
         </div>
         {/* Plant List */}
         <div className="px-0 sm:px-2 w-full">
-          <div className="backdrop-blur-sm bg-white/75 border border-green-100/50 rounded-2xl shadow-lg animate-fade-in p-2 sm:p-4 transition-all duration-300
+          <div className="backdrop-blur-sm bg-white/75 dark:bg-[#232a26]/80 border border-green-100/50 dark:border-[#223128]/60 rounded-2xl shadow-lg animate-fade-in p-2 sm:p-4 transition-all duration-300
               hover:scale-105 hover:shadow-green-100/60 hover:ring-2 hover:ring-green-200/60">
             <DashboardPlantList
               search={search}
@@ -168,7 +166,7 @@ export default function Dashboard() {
       </div>
       <BottomTabNav />
       {/* Extra layer for glass-like bright edge, less blur for clarity */}
-      <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-br from-white/30 via-green-100/20 to-white/5" />
+      <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-br from-white/30 via-green-100/20 to-white/5 dark:from-[#202824]/40 dark:via-[#232a26]/20 dark:to-[#181f1a]/20" />
     </main>
   );
 }
