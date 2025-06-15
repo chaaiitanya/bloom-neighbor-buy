@@ -13,6 +13,21 @@ type ProfileData = {
   socials?: { [k: string]: string };
 };
 
+function parseSocialsField(raw: any): { [k: string]: string } {
+  // Accepts null, object, stringified JSON, array, etc, and always returns an object
+  if (!raw) return {};
+  if (typeof raw === "object" && !Array.isArray(raw)) return raw as { [k: string]: string };
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw);
+      return typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+    } catch {
+      return {};
+    }
+  }
+  return {};
+}
+
 export default function ProfileEditForm({ onUpdated }: { onUpdated?: () => void }) {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -22,8 +37,24 @@ export default function ProfileEditForm({ onUpdated }: { onUpdated?: () => void 
     (async () => {
       const { data: u } = await supabase.auth.getUser();
       if (u.user) {
-        const { data: p } = await supabase.from("profiles").select("*").eq("id", u.user.id).single();
-        setProfile(p);
+        const { data: p } = await supabase.from("profiles").select("*").eq("id", u.user.id).maybeSingle();
+        if (p) {
+          setProfile({
+            full_name: p.full_name || "",
+            avatar_url: p.avatar_url || "",
+            location: p.location || "",
+            bio: p.bio || "",
+            socials: parseSocialsField(p.socials),
+          });
+        } else {
+          setProfile({
+            full_name: "",
+            avatar_url: "",
+            location: "",
+            bio: "",
+            socials: {},
+          });
+        }
       }
       setLoading(false);
     })();
@@ -35,20 +66,35 @@ export default function ProfileEditForm({ onUpdated }: { onUpdated?: () => void 
   };
 
   const handleSocialChange = (key: string, value: string) => {
-    setProfile(prev => prev ? { ...prev, socials: { ...prev.socials, [key]: value } } : prev);
+    setProfile(prev =>
+      prev
+        ? {
+            ...prev,
+            socials: { ...(prev.socials ?? {}), [key]: value },
+          }
+        : prev
+    );
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!profile) return;
     setSaving(true);
-    const { error } = await supabase.from("profiles").update({
-      ...profile,
-      socials: profile.socials || {},
-    }).select().single();
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        ...profile,
+        socials: profile.socials || {},
+      })
+      .select()
+      .single();
     setSaving(false);
     if (error) {
-      toast({ title: "Failed to update profile", description: error.message, variant: "destructive" });
+      toast({
+        title: "Failed to update profile",
+        description: error.message,
+        variant: "destructive",
+      });
     } else {
       toast({ title: "Profile updated!" });
       if (onUpdated) onUpdated();
@@ -74,7 +120,7 @@ export default function ProfileEditForm({ onUpdated }: { onUpdated?: () => void 
       <div>
         <label className="font-semibold text-green-800">Social Links</label>
         <div className="flex flex-col gap-2 mt-1">
-          {["instagram", "twitter", "facebook", "tiktok"].map((key) => (
+          {["instagram", "twitter", "facebook", "tiktok"].map(key => (
             <Input
               key={key}
               placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
