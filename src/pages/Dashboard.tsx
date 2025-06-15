@@ -43,8 +43,12 @@ export default function Dashboard() {
   const [isPostSheetOpen, setIsPostSheetOpen] = useState(false);
 
   // ---- auto-location detection ----
+  // Persist location-detected in sessionStorage for the active session
+  const [locationDetected, setLocationDetected] = useState(() => {
+    return !!sessionStorage.getItem("dashboard_location_detected");
+  });
+
   // Only try to detect if user hasn't already typed a search this session
-  const [locationDetected, setLocationDetected] = useState(false);
   const { city: detectedCity, loading: locationLoading, error: locationError } =
     useUserLocationCity(!locationDetected && !search);
 
@@ -53,6 +57,7 @@ export default function Dashboard() {
     if (detectedCity && !locationDetected && !search) {
       setSearch(detectedCity);
       setLocationDetected(true);
+      sessionStorage.setItem("dashboard_location_detected", "1");
       toast({
         title: "Localized for you",
         description: `Showing plants near ${detectedCity}`,
@@ -60,13 +65,26 @@ export default function Dashboard() {
     }
     if (locationError && !locationDetected && !search) {
       setLocationDetected(true); // Prevent repeated requests
+      sessionStorage.setItem("dashboard_location_detected", "1");
       toast({
         title: "Location not detected",
         description: "Please enter your city above to find local plants.",
         variant: "destructive",
       });
     }
-  }, [detectedCity, locationError, locationDetected, search, toast]);
+  }, [detectedCity, locationError, locationDetected, search]);
+
+  // On logout/login/session change, clear flag if needed
+  useEffect(() => {
+    // When user signs out, clear the flag
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        sessionStorage.removeItem("dashboard_location_detected");
+        setLocationDetected(false);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   // When the URL search param changes, update local search bar!
   useEffect(() => {
@@ -86,7 +104,7 @@ export default function Dashboard() {
         {/* Header Card: Avatar + Sproutsly symbol + Post Plant */}
         <div className="flex justify-between items-start w-full px-0">
           <div className="flex-1">
-            <div className="backdrop-blur-sm bg-white/80 dark:bg-[#1b2321]/80 shadow-2xl border border-green-100/60 dark:border-[#223128]/70 rounded-3xl flex items-center gap-4 py-4 pl-5 pr-3 sm:pl-8 sm:pr-4 ring-1 ring-white/30
+            <div className="backdrop-blur-sm bg-white/80 dark:bg-[#1b2321]/80 shadow-2xl border border-green-100/60 dark:border-[#222f25]/80 rounded-3xl flex items-center gap-4 py-4 pl-5 pr-3 sm:pl-8 sm:pr-4 ring-1 ring-white/30
               transition-all duration-300 hover:scale-105 hover:shadow-green-200/50 hover:ring-2 hover:ring-green-200/70">
               {/* Avatar (left) */}
               <DashboardProfileAvatar />
