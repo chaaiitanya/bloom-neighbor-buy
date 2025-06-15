@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { ProfilePreview } from "@/components/ProfilePreview";
 import BottomTabNav from "@/components/BottomTabNav";
@@ -8,6 +7,7 @@ import ProfileTransactions from "@/components/ProfileTransactions";
 import ProfileFavorites from "@/components/ProfileFavorites";
 import ProfileQrShare from "@/components/ProfileQrShare";
 import ProfileSocialLinks from "@/components/ProfileSocialLinks";
+import ProfileListings from "@/components/ProfileListings";
 import { supabase } from "@/integrations/supabase/client";
 
 type ProfileData = {
@@ -84,6 +84,7 @@ export default function Profile() {
           </div>
         ) : (
           <>
+            <ProfileListings />
             <div className="w-full bg-white rounded-2xl p-4 border shadow mt-4">
               <ProfileFavorites />
             </div>
