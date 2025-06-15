@@ -57,6 +57,16 @@ export default function DashboardPlantList({
   const [loading, setLoading] = useState(true);
   const [plants, setPlants] = useState<PlantRaw[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [myUserId, setMyUserId] = useState<string | null>(null);
+
+  // Fetch current user id on mount
+  useEffect(() => {
+    async function fetchUserId() {
+      const { data: auth } = await supabase.auth.getUser();
+      setMyUserId(auth?.user?.id ?? null);
+    }
+    fetchUserId();
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -134,8 +144,11 @@ export default function DashboardPlantList({
     fetchPlantsWithProfileNames();
   }, []);
 
-  // Filtering logic
+  // Filter out my own listings if user is logged in
   let filteredPlants = plants;
+  if (myUserId) {
+    filteredPlants = filteredPlants.filter((plant) => plant.sellerId !== myUserId);
+  }
   if (filter && filter !== "all") {
     filteredPlants = filteredPlants.filter((plant) => plant.type === filter);
   }
@@ -197,6 +210,9 @@ export default function DashboardPlantList({
   let otherAreaPlants: PlantRaw[] = [];
   if (didFilter && filteredPlants.length === 0) {
     let suggestionSource = plants.slice();
+    if (myUserId) {
+      suggestionSource = suggestionSource.filter((plant) => plant.sellerId !== myUserId);
+    }
     if (search && search.trim()) {
       const q = search.trim().toLowerCase();
       suggestionSource = suggestionSource
