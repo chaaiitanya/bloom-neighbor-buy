@@ -42,7 +42,6 @@ export default function DashboardPlantList({
     setLoading(true);
     setError(null);
     async function fetchPlants() {
-      // Get plant listings and seller profile data (username)
       let { data, error } = await supabase
         .from("plants")
         .select(`
@@ -72,13 +71,12 @@ export default function DashboardPlantList({
         return;
       }
 
-      // Build plant list according to the expected DashboardPlantGrid format
-      const transformed = data.map((plant: any) => ({
+      // Store PlantRaw (price is number, no image field)
+      const transformed: PlantRaw[] = data.map((plant: any) => ({
         id: plant.id,
         name: plant.name,
-        price: `$${plant.price}`,
+        price: Number(plant.price),
         photo_url: plant.photo_url,
-        image: plant.photo_url ?? "/placeholder.svg",
         distance: "—", // Not tracked in db yet
         location: plant.location ?? "Unlisted",
         sellerId: plant.user_id,
@@ -92,11 +90,8 @@ export default function DashboardPlantList({
     fetchPlants();
   }, []);
 
-  // Filtering logic (matches existing demo logic, but against fetched real data)
-
+  // Filtering logic (performed on PlantRaw type)
   let filteredPlants = plants;
-
-  // Filter by range: currently, we have no "distance" info in db, so skip this for now
 
   // Filter by type (filter)
   if (filter && filter !== "all") {
@@ -106,10 +101,11 @@ export default function DashboardPlantList({
   // Filter by search: name, location, or seller (case-insensitive)
   if (search && search.trim()) {
     const q = search.trim().toLowerCase();
-    filteredPlants = filteredPlants.filter((plant) =>
-      plant.name.toLowerCase().includes(q) ||
-      plant.location.toLowerCase().includes(q) ||
-      plant.seller.toLowerCase().includes(q)
+    filteredPlants = filteredPlants.filter(
+      (plant) =>
+        plant.name.toLowerCase().includes(q) ||
+        (plant.location?.toLowerCase() || "").includes(q) ||
+        plant.seller.toLowerCase().includes(q)
     );
   }
 
@@ -117,7 +113,7 @@ export default function DashboardPlantList({
   if (minPrice && !isNaN(Number(minPrice))) {
     const min = Number(minPrice);
     filteredPlants = filteredPlants.filter(
-      (plant) => parsePrice(plant.price) >= min
+      (plant) => plant.price >= min
     );
   }
 
@@ -125,7 +121,7 @@ export default function DashboardPlantList({
   if (maxPrice && !isNaN(Number(maxPrice))) {
     const max = Number(maxPrice);
     filteredPlants = filteredPlants.filter(
-      (plant) => parsePrice(plant.price) <= max
+      (plant) => plant.price <= max
     );
   }
 
@@ -136,6 +132,15 @@ export default function DashboardPlantList({
     (typeof range === "number" && range !== 10) ||
     minPrice ||
     maxPrice;
+
+  // Prepare mapped plants for DashboardPlantGrid arguments
+  const gridPlants = (arr: PlantRaw[]) =>
+    arr.map((plant) => ({
+      ...plant,
+      image: plant.photo_url ?? "/placeholder.svg",
+      price: `$${plant.price}`,
+      distance: plant.distance ?? "—",
+    }));
 
   // Loading & error handling
   if (loading) {
@@ -159,12 +164,10 @@ export default function DashboardPlantList({
       <>
         <div className="text-center text-green-700 col-span-full py-8 font-semibold">
           No plants found in your area.
-          <div className="mt-2 text-green-800">
-            See other available plants:
-          </div>
+          <div className="mt-2 text-green-800">See other available plants:</div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 w-full mt-4 transition-all">
-          <DashboardPlantGrid plants={plants} onPlantClick={setSelectedPlant} />
+          <DashboardPlantGrid plants={gridPlants(plants)} onPlantClick={setSelectedPlant} />
         </div>
         <PlantDetailDrawer
           open={!!selectedPlant}
@@ -178,7 +181,7 @@ export default function DashboardPlantList({
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 w-full mt-4 transition-all">
-        <DashboardPlantGrid plants={filteredPlants} onPlantClick={setSelectedPlant} />
+        <DashboardPlantGrid plants={gridPlants(filteredPlants)} onPlantClick={setSelectedPlant} />
       </div>
       <PlantDetailDrawer
         open={!!selectedPlant}
