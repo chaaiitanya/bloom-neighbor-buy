@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -14,7 +13,6 @@ type ProfileData = {
 };
 
 function parseSocialsField(raw: any): { [k: string]: string } {
-  // Accepts null, object, stringified JSON, array, etc, and always returns an object
   if (!raw) return {};
   if (typeof raw === "object" && !Array.isArray(raw)) return raw as { [k: string]: string };
   if (typeof raw === "string") {
@@ -32,11 +30,13 @@ export default function ProfileEditForm({ onUpdated }: { onUpdated?: () => void 
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
       const { data: u } = await supabase.auth.getUser();
       if (u.user) {
+        setUserId(u.user.id);
         const { data: p } = await supabase.from("profiles").select("*").eq("id", u.user.id).maybeSingle();
         if (p) {
           setProfile({
@@ -78,7 +78,7 @@ export default function ProfileEditForm({ onUpdated }: { onUpdated?: () => void 
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!profile) return;
+    if (!profile || !userId) return;
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
@@ -86,6 +86,7 @@ export default function ProfileEditForm({ onUpdated }: { onUpdated?: () => void 
         ...profile,
         socials: profile.socials || {},
       })
+      .eq("id", userId)
       .select()
       .single();
     setSaving(false);
