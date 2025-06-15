@@ -65,10 +65,12 @@ export default function CommunityChatBox({
           table: "community_chat",
         },
         (payload: any) => {
-          setMessages((prev) => [
-            ...prev,
-            payload.new as CommunityMessage,
-          ]);
+          setMessages((prev) => {
+            // Avoid adding duplicate messages if already present
+            const already = prev.find((msg) => msg.id === payload.new.id);
+            if (already) return prev;
+            return [...prev, payload.new as CommunityMessage];
+          });
         }
       )
       .subscribe();
@@ -94,7 +96,7 @@ export default function CommunityChatBox({
     setSending(true);
 
     // Send the message to Supabase
-    const { error } = await supabase.from("community_chat").insert([
+    const { data, error } = await supabase.from("community_chat").insert([
       {
         sender_id: user.id,
         content: message,
@@ -105,13 +107,19 @@ export default function CommunityChatBox({
           "User",
         avatar_url: user.user_metadata?.avatar_url || null,
       }
-    ]);
+    ]).select("id,sender_id,sender_name,avatar_url,content,sent_at").single();
+
     setSending(false);
     setMessage("");
     if (error) {
       toast({ title: "Message failed", description: error.message, variant: "destructive" });
+      return;
     }
-    // Message will appear due to realtime subscription
+    // Optimistically add the message to state (if not present)
+    if (data && !messages.find((msg) => msg.id === data.id)) {
+      setMessages((prev) => [...prev, data as CommunityMessage]);
+    }
+    // Message will still appear from realtime as well, but duplicates are prevented above
   };
 
   return (
