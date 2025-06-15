@@ -1,3 +1,4 @@
+
 import { MapPin } from "lucide-react";
 import { Heart } from "lucide-react";
 import { usePlantFavorite } from "@/hooks/usePlantFavorite";
@@ -15,7 +16,16 @@ type PlantProps = {
   id?: string; // Add plant id to props!
 };
 
-export function PlantCard({ image, name, price, distance, location, seller, onClick, id }: PlantProps) {
+export function PlantCard({
+  image,
+  name,
+  price,
+  distance,
+  location,
+  seller,
+  onClick,
+  id,
+}: PlantProps) {
   // Show favorite button if id is provided
   const { isFavorite, toggleFavorite, loading } = usePlantFavorite(id);
 
@@ -87,8 +97,14 @@ export function PlantCard({ image, name, price, distance, location, seller, onCl
             <span>{distance}</span>
           </div>
         </div>
-        <div className="mt-2 text-xs text-gray-400 dark:text-gray-200">Seller: {seller}</div>
+      </div>
+      {/* Seller label always underneath the card body */}
+      <div className="pb-2 flex flex-col items-center">
+        <span className="text-xs text-gray-400 dark:text-gray-200 pt-0 font-medium">
+          Seller: {seller}
+        </span>
       </div>
     </div>
   );
 }
+
