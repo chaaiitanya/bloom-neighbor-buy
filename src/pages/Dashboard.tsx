@@ -82,7 +82,7 @@ export default function Dashboard() {
   return (
     <main className="min-h-screen flex flex-col items-center bg-gradient-to-br from-green-100/70 via-white/90 to-green-50/70 px-1 sm:px-4 lg:px-0 pb-16 relative">
       {/* Main glass-card wrapper */}
-      <div className="w-full max-w-5xl flex flex-col gap-8 mt-8">
+      <div className="w-full max-w-5xl flex flex-col gap-8 mt-8 pb-24">
         {/* Header Card: Avatar + Post Plant */}
         <div className="flex justify-between items-start w-full px-0">
           <div className="flex-1">
