@@ -101,43 +101,40 @@ export default function Dashboard() {
     <main className="min-h-screen flex flex-col items-center bg-gradient-to-br from-green-100/70 via-white/90 to-green-50/70 dark:bg-gradient-to-br dark:from-[#181f1a] dark:via-[#222b22]/90 dark:to-[#181f1a]/80 px-1 sm:px-4 lg:px-0 pb-16 relative transition-colors">
       {/* Main glass-card wrapper */}
       <div className="w-full max-w-5xl flex flex-col gap-8 mt-8 pb-24">
-        {/* Header Card: Avatar + Sproutsly symbol + Post Plant */}
-        <div className="flex justify-between items-start w-full px-0">
-          <div className="flex-1">
-            <div className="backdrop-blur-sm bg-white/80 dark:bg-[#1b2321]/80 shadow-2xl border border-green-100/60 dark:border-[#222f25]/80 rounded-3xl flex items-center gap-4 py-4 pl-5 pr-3 sm:pl-8 sm:pr-4 ring-1 ring-white/30
-              transition-all duration-300 hover:scale-105 hover:shadow-green-200/50 hover:ring-2 hover:ring-green-200/70">
-              {/* Avatar (left) */}
-              <DashboardProfileAvatar />
-              {/* Center Sproutsly symbol */}
-              <div className="flex-1 flex justify-center items-center pointer-events-none select-none">
-                <span className="rounded-full bg-green-600/90 dark:bg-green-800/70 shadow-lg ring-2 ring-white/60 border-2 border-green-300/40 dark:border-green-800 p-2 sm:p-2.5 backdrop-blur-md flex items-center justify-center text-2xl sm:text-3xl animate-fade-in">
-                  {/* Sproutsly logo: just a leaf emoji */}
-                  🍃
-                </span>
-              </div>
-              {/* Post Plant button (right) */}
-              <Sheet open={isPostSheetOpen} onOpenChange={setIsPostSheetOpen}>
-                <SheetTrigger asChild>
-                  <Button
-                    variant="default"
-                    className="bg-green-700 hover:bg-green-800 text-white shadow-xl rounded-xl px-5 py-2 flex gap-2 items-center font-bold
-                      transition-transform duration-200 hover:scale-105 hover:shadow-green-500/30"
-                    aria-label="Post a Plant"
-                  >
-                    <Plus className="w-5 h-5" />
-                    <span className="hidden sm:inline">Post a Plant</span>
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="max-w-md w-full border-l">
-                  <SheetHeader>
-                    <SheetTitle className="text-xl text-green-900 font-semibold">
-                      Post a Plant
-                    </SheetTitle>
-                  </SheetHeader>
-                  <PostPlantForm afterPost={handleAfterPost} />
-                </SheetContent>
-              </Sheet>
-            </div>
+        {/* Improved Header Card: 3 columns - left (spacer), center (logo), right (avatar + post) */}
+        <div className="flex items-center justify-between w-full px-0">
+          {/* Left spacer */}
+          <div className="flex-1 min-w-0" />
+          {/* Center Sproutsly symbol */}
+          <div className="flex flex-1 justify-center items-center pointer-events-none select-none">
+            <span className="rounded-full bg-green-600/90 dark:bg-green-800/70 shadow-lg ring-2 ring-white/60 border-2 border-green-300/40 dark:border-green-800 p-2 sm:p-2.5 backdrop-blur-md flex items-center justify-center text-2xl sm:text-3xl animate-fade-in">
+              🍃
+            </span>
+          </div>
+          {/* Right side: Profile avatar and Post Plant */}
+          <div className="flex justify-end items-center flex-1 gap-2 sm:gap-4 pl-0 sm:pl-4">
+            <DashboardProfileAvatar />
+            <Sheet open={isPostSheetOpen} onOpenChange={setIsPostSheetOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="default"
+                  className="bg-green-700 hover:bg-green-800 text-white shadow-xl rounded-xl px-4 sm:px-5 py-2 flex gap-2 items-center font-bold
+                    transition-transform duration-200 hover:scale-105 hover:shadow-green-500/30"
+                  aria-label="Post a Plant"
+                >
+                  <Plus className="w-5 h-5" />
+                  <span className="hidden sm:inline">Post a Plant</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="max-w-md w-full border-l">
+                <SheetHeader>
+                  <SheetTitle className="text-xl text-green-900 font-semibold">
+                    Post a Plant
+                  </SheetTitle>
+                </SheetHeader>
+                <PostPlantForm afterPost={handleAfterPost} />
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
 
