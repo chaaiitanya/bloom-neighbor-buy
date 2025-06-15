@@ -1,4 +1,3 @@
-
 const favoritePlants = [
   {
     image:
@@ -28,20 +27,7 @@ export default function FavoritePlants() {
       <h2 className="text-lg font-bold text-green-100 mb-4 text-center drop-shadow">
         Popular in your neighbourhood
       </h2>
-      <div className="flex gap-4 px-6 py-3 bg-emerald-200/10 border border-white/20 backdrop-blur-md rounded-2xl shadow-md">
-        {favoritePlants.map((plant, idx) => (
-          <div key={idx} className="flex flex-col items-center">
-            <img
-              src={plant.image}
-              alt={plant.name}
-              className="w-16 h-16 rounded-full border-4 border-green-300 shadow object-cover bg-green-50"
-            />
-            <span className="mt-2 text-green-100 text-xs shadow text-center drop-shadow">
-              {plant.name}
-            </span>
-          </div>
-        ))}
-      </div>
+      
     </div>
   );
 }
