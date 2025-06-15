@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -13,11 +14,31 @@ import { User, LogOut, Star, Heart, FileText, QrCode, Share2, Settings } from "l
 
 export default function DashboardProfileAvatar() {
   const [user, setUser] = useState<any>(null);
+  const [profileName, setProfileName] = useState<string | null>(null);
+  const [profileAvatar, setProfileAvatar] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
+    // Get supabase user first
+    supabase.auth.getUser().then(async ({ data }) => {
       setUser(data.user);
+
+      // Fetch profile name from public.profiles if user exists
+      if (data.user?.id) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("full_name, avatar_url")
+          .eq("id", data.user.id)
+          .maybeSingle();
+
+        if (profile) {
+          setProfileName(profile.full_name || null);
+          setProfileAvatar(profile.avatar_url || null);
+        } else {
+          setProfileName(null);
+          setProfileAvatar(null);
+        }
+      }
     });
   }, []);
 
@@ -26,11 +47,22 @@ export default function DashboardProfileAvatar() {
     navigate("/auth");
   };
 
-  const displayName = user?.user_metadata?.full_name || user?.email || "User";
+  // Use fetched profile name first, fallback to metadata/email/User
+  const displayName =
+    profileName ||
+    user?.user_metadata?.full_name ||
+    user?.email ||
+    "User";
+
+  // Prefer avatar from profile table, fallback to metadata or a default generator
   const avatarUrl =
+    profileAvatar ||
     user?.user_metadata?.avatar_url ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      user?.user_metadata?.full_name || displayName
+      profileName ||
+      user?.user_metadata?.full_name ||
+      user?.email ||
+      "User"
     )}&size=128&background=BBF7D0&color=047857&font-size=0.45`;
 
   return (
@@ -38,7 +70,7 @@ export default function DashboardProfileAvatar() {
       <DropdownMenuTrigger asChild>
         <button aria-label="Open profile menu">
           <Avatar className="w-12 h-12 bg-green-100 border-[3px] border-green-300 shadow-md hover:scale-105 transition">
-            {user?.user_metadata?.avatar_url ? (
+            {profileAvatar || user?.user_metadata?.avatar_url ? (
               <AvatarImage src={avatarUrl} alt={displayName} />
             ) : (
               <AvatarFallback>
@@ -51,7 +83,7 @@ export default function DashboardProfileAvatar() {
       <DropdownMenuContent className="w-56 mt-2">
         <div className="flex items-center gap-3 px-3 py-2">
           <Avatar className="w-10 h-10 bg-green-100 border-[2px] border-green-300">
-            {user?.user_metadata?.avatar_url ? (
+            {profileAvatar || user?.user_metadata?.avatar_url ? (
               <AvatarImage src={avatarUrl} alt={displayName} />
             ) : (
               <AvatarFallback>
