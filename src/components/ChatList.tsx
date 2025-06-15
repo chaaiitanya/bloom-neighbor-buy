@@ -187,7 +187,7 @@ export default function ChatList() {
           <DialogHeader>
             <div className="flex gap-3 py-3 px-4 items-center border-b border-green-50 bg-green-50 rounded-t-xl">
               <ProfilePreview
-                name={
+                fullName={
                   activeChat?.participant.full_name ||
                   activeChat?.participant.username ||
                   activeChat?.participant.email ||

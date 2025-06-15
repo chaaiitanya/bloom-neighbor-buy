@@ -64,7 +64,7 @@ export default function Profile() {
             <div className="mb-2 h-12 w-32 rounded-full bg-green-100 animate-pulse" />
           ) : (
             <ProfilePreview
-              name={profile?.full_name || "User"}
+              fullName={profile?.full_name || "User"}
               avatar={profile?.avatar_url}
               rating={profile?.rating ?? 4.6}
               sales={profile?.sales ?? 22}

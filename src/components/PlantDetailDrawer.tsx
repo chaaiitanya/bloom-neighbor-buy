@@ -96,7 +96,7 @@ export default function PlantDetailDrawer({ open, plant, onClose }: PlantDetailD
           <div className="border-t border-green-100 mt-4 pt-3">
             <span className="block text-green-600 font-medium mb-1">Seller Information</span>
             <ProfilePreview
-              name={plant.seller}
+              fullName={plant.seller}
               avatar={plant.sellerAvatar}
               rating={plant.sellerRating ?? 4.6}
               sales={plant.sellerSales ?? 22}
