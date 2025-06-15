@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,11 @@ export default function Auth() {
   const [session, setSession] = useState<any>(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Parse ?redirectTo=... from URL
+  const searchParams = new URLSearchParams(location.search);
+  const redirectTo = searchParams.get("redirectTo");
 
   // Auth state listener (ensures live session updates)
   useEffect(() => {
@@ -34,10 +39,16 @@ export default function Auth() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Redirect to / if already logged in
+  // Redirect to / or redirectTo if already logged in
   useEffect(() => {
-    if (user) navigate("/", { replace: true });
-  }, [user, navigate]);
+    if (user) {
+      if (redirectTo) {
+        navigate(redirectTo, { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [user, navigate, redirectTo]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,16 +72,20 @@ export default function Auth() {
           title: "Welcome back!",
           description: "Successfully logged in.",
         });
-        // Redirect to dashboard after successful login
-        navigate("/dashboard", { replace: true });
+        // Redirect to dashboard or where user came from
+        if (redirectTo) {
+          navigate(redirectTo, { replace: true });
+        } else {
+          navigate("/dashboard", { replace: true });
+        }
       }
     } else {
       // Signup mode (with emailRedirectTo as required for Supabase)
-      const redirectTo = `${window.location.origin}/`;
+      const redirectUrl = `${window.location.origin}/`;
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: redirectTo },
+        options: { emailRedirectTo: redirectUrl },
       });
       if (error) {
         setError(error.message);

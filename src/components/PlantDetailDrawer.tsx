@@ -4,6 +4,7 @@ import { ProfilePreview } from "@/components/ProfilePreview";
 import ChatBox from "./ChatBox";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate, useLocation } from "react-router-dom";
 
 type Plant = {
   image: string;
@@ -29,6 +30,8 @@ interface PlantDetailDrawerProps {
 export default function PlantDetailDrawer({ open, plant, onClose }: PlantDetailDrawerProps) {
   const [showChat, setShowChat] = useState(false);
   const [myUserId, setMyUserId] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     // Get current user id
@@ -45,8 +48,22 @@ export default function PlantDetailDrawer({ open, plant, onClose }: PlantDetailD
 
   if (!plant) return null;
 
-  // Don't show "Message Seller" if I'm the seller
+  // Only allow show chat button to logged-in users that are not the seller
   const canChat = plant.sellerId && myUserId && myUserId !== plant.sellerId;
+
+  // Guest messaging: if NOT logged in, prompt login and redirect back here
+  const handleMessageSeller = () => {
+    if (!myUserId) {
+      // Save current path and plant info to redirect back after login
+      // We'll send ?redirectTo=<current path with state>
+      const params = new URLSearchParams();
+      params.set("redirectTo", location.pathname + location.search + location.hash);
+      // Optionally: can also pass plant id in state, if you want to reopen this drawer after login
+      navigate(`/auth?${params.toString()}`);
+      return;
+    }
+    setShowChat(true);
+  };
 
   return (
     <Drawer open={open} onOpenChange={v => { if (!v) onClose(); }}>
@@ -86,17 +103,19 @@ export default function PlantDetailDrawer({ open, plant, onClose }: PlantDetailD
             />
           </div>
           {/* Message Seller Button + Chat */}
-          {canChat && !showChat && (
+          {/* Show button if I'm NOT the seller */}
+          {plant.sellerId && myUserId !== plant.sellerId && !showChat && (
             <div className="mt-5 flex justify-center">
               <button
                 className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-xl shadow"
-                onClick={() => setShowChat(true)}
+                onClick={handleMessageSeller}
               >
                 Message Seller
               </button>
             </div>
           )}
-          {canChat && showChat && plant.sellerId && myUserId && (
+          {/* If logged in and showChat is true, show ChatBox */}
+          {plant.sellerId && myUserId && myUserId !== plant.sellerId && showChat && (
             <div className="mt-5">
               <ChatBox
                 otherUserId={plant.sellerId}

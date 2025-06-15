@@ -12,14 +12,6 @@ import PostPlantForm from "@/components/PostPlantForm";
 export default function Dashboard() {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        navigate("/auth");
-      }
-    });
-  }, [navigate]);
-
   const [search, setSearch] = useState("");
   const [range, setRange] = useState(10);
   const [filter, setFilter] = useState("all");
