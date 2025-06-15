@@ -81,12 +81,13 @@ export default function Dashboard() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center bg-gradient-to-br from-green-50 to-white px-1 sm:px-4 lg:px-0 pb-16">
-      <div className="w-full max-w-5xl flex flex-col gap-7 mt-6">
+    <main className="min-h-screen flex flex-col items-center bg-gradient-to-br from-green-100/60 via-white/80 to-green-50/80 px-1 sm:px-4 lg:px-0 pb-16 relative">
+      {/* Glassy main page card wrapper */}
+      <div className="w-full max-w-5xl flex flex-col gap-8 mt-8">
         {/* Header Card: Avatar + Post Plant */}
         <div className="flex justify-between items-start w-full px-0">
           <div className="flex-1">
-            <div className="bg-white/80 shadow-lg rounded-2xl flex items-center gap-4 py-3 pl-4 pr-2 sm:pl-6 sm:pr-3 border border-green-100">
+            <div className="backdrop-blur-xl bg-white/60 shadow-2xl border border-green-100/60 rounded-3xl flex items-center gap-4 py-4 pl-5 pr-3 sm:pl-8 sm:pr-4 ring-1 ring-white/35">
               <DashboardProfileAvatar />
               <div className="flex-1 min-w-[1px]" />
               {/* Post plant button appears to the right */}
@@ -115,10 +116,10 @@ export default function Dashboard() {
         </div>
 
         {/* Search + Filters Section Card */}
-        <div className="w-full bg-white/80 rounded-2xl shadow-lg border border-green-100 py-5 px-4 sm:px-8 flex flex-col gap-4">
+        <div className="w-full backdrop-blur-xl bg-white/55 border border-green-100/60 rounded-3xl shadow-2xl ring-1 ring-white/30 py-7 px-4 sm:px-10 flex flex-col gap-5">
           <DashboardSearchBar value={search} onChange={setSearch} />
           {/* Category filters row */}
-          <div className="flex flex-col sm:flex-row items-center gap-2 flex-wrap w-full">
+          <div className="flex flex-col sm:flex-row items-center gap-3 flex-wrap w-full">
             {/* Filter Popover (Range + Price) moved to the start */}
             <DashboardFilterPopover
               range={range}
@@ -134,16 +135,15 @@ export default function Dashboard() {
           </div>
         </div>
         {/* Section heading */}
-        <div className="mt-1 px-1 sm:px-2 w-full flex items-center justify-between">
-          <h2 className="text-xl md:text-2xl font-extrabold text-green-800 tracking-tight mb-1">
+        <div className="mt-1 px-2 w-full flex items-center justify-between">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-green-800/90 tracking-tight mb-1 drop-shadow-md select-none">
             🌿 Best in your area
           </h2>
           {/* Future: can add sort or more options here */}
         </div>
-        {/* Plants List */}
+        {/* Plant List */}
         <div className="px-0 sm:px-2 w-full">
-          {/* ADD fade-in/slide animation for plant list */}
-          <div className="animate-fade-in">
+          <div className="backdrop-blur-xl bg-white/40 border border-green-100/50 rounded-2xl shadow-lg animate-fade-in p-2 sm:p-4 transition-all duration-300">
             <DashboardPlantList
               search={search}
               range={range}
@@ -155,6 +155,8 @@ export default function Dashboard() {
         </div>
       </div>
       <BottomTabNav />
+      {/* Extra layer for glass-like bright edge */}
+      <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-br from-white/40 via-green-100/40 to-white/10 backdrop-blur-lg" />
     </main>
   );
 }
