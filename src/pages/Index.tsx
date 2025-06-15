@@ -105,7 +105,7 @@ const Index = () => {
     <div
       className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-[#154321] to-[#19391d] bg-no-repeat bg-cover"
       style={{
-        backgroundImage: "none",
+        backgroundImage: `url("${bgImage}")`, // restores the intended planty background image
       }}
     >
       {/* BG Blur & overlay */}
