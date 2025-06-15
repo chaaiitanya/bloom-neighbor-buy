@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +11,8 @@ import PostPlantForm from "@/components/PostPlantForm";
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { useUserLocationCity } from "@/hooks/useUserLocationCity";
+import { toast } from "@/components/ui/use-toast";
 
 function getQueryParam(searchString: string, key: string) {
   const params = new URLSearchParams(searchString);
@@ -33,6 +34,32 @@ export default function Dashboard() {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [isPostSheetOpen, setIsPostSheetOpen] = useState(false);
+
+  // ---- auto-location detection ----
+  // Only try to detect if user hasn't already typed a search this session
+  const [locationDetected, setLocationDetected] = useState(false);
+  const { city: detectedCity, loading: locationLoading, error: locationError } =
+    useUserLocationCity(!locationDetected && !search);
+
+  // When user city is detected, set as search only if it hasn't been set
+  useEffect(() => {
+    if (detectedCity && !locationDetected && !search) {
+      setSearch(detectedCity);
+      setLocationDetected(true);
+      toast({
+        title: "Localized for you",
+        description: `Showing plants near ${detectedCity}`,
+      });
+    }
+    if (locationError && !locationDetected && !search) {
+      setLocationDetected(true); // Prevent repeated requests
+      toast({
+        title: "Location not detected",
+        description: "Please enter your city above to find local plants.",
+        variant: "destructive",
+      });
+    }
+  }, [detectedCity, locationError, locationDetected, search, toast]);
 
   // When the URL search param changes, update local search bar!
   useEffect(() => {
