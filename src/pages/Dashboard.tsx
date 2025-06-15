@@ -9,6 +9,9 @@ import DashboardPlantList from "@/components/DashboardPlantList";
 import DashboardProfileAvatar from "@/components/DashboardProfileAvatar";
 import DashboardFilterPopover from "@/components/DashboardFilterPopover";
 import PostPlantForm from "@/components/PostPlantForm";
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 function getQueryParam(searchString: string, key: string) {
   const params = new URLSearchParams(searchString);
@@ -29,18 +32,45 @@ export default function Dashboard() {
   const [filter, setFilter] = useState("all");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [isPostSheetOpen, setIsPostSheetOpen] = useState(false);
 
   // When the URL search param changes, update local search bar!
   useEffect(() => {
     setSearch(getQueryParam(location.search, "search"));
   }, [location.search]);
 
+  // Handler to refresh plant list after submit
+  const handleAfterPost = () => {
+    setIsPostSheetOpen(false);
+    window.location.reload();
+  };
+
   return (
     <main className="min-h-screen flex flex-col items-center bg-gradient-to-br from-green-50 to-white px-2 sm:px-4 lg:px-12 pb-10">
       <div className="w-full flex flex-col gap-4 mt-6">
-        {/* Profile Avatar at top-left */}
-        <div className="flex justify-start">
+        {/* Header: Avatar top-left, Post Plant top-right */}
+        <div className="flex justify-between items-start w-full">
           <DashboardProfileAvatar />
+
+          {/* Top-right: Post a Plant button */}
+          <Sheet open={isPostSheetOpen} onOpenChange={setIsPostSheetOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="default"
+                className="bg-green-700 hover:bg-green-800 text-white shadow-lg rounded-xl px-5 py-2 flex gap-2 items-center font-bold"
+                aria-label="Post a Plant"
+              >
+                <Plus className="w-5 h-5" />
+                <span className="hidden sm:inline">Post a Plant</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="max-w-md w-full border-l">
+              <SheetHeader>
+                <SheetTitle className="text-xl text-green-900 font-semibold">Post a Plant</SheetTitle>
+              </SheetHeader>
+              <PostPlantForm afterPost={handleAfterPost} />
+            </SheetContent>
+          </Sheet>
         </div>
         <div className="flex flex-col gap-4 px-0 sm:px-2 w-full">
           <DashboardSearchBar value={search} onChange={setSearch} />
