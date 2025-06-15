@@ -173,7 +173,7 @@ const Index = () => {
                   <Input
                     type="text"
                     placeholder="First name"
-                    className="bg-white/95 border border-[#b8f5c0] rounded-lg text-[#193e17] focus:ring-2 focus:ring-[#18c964] shadow-none font-semibold placeholder:font-normal"
+                    className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-300/60 rounded-lg shadow-none font-semibold placeholder:font-normal"
                     value={firstName}
                     required
                     disabled={loading}
@@ -183,7 +183,7 @@ const Index = () => {
                   <Input
                     type="text"
                     placeholder="Last name"
-                    className="bg-white/95 border border-[#b8f5c0] rounded-lg text-[#193e17] focus:ring-2 focus:ring-[#18c964] shadow-none font-semibold placeholder:font-normal"
+                    className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-300/60 rounded-lg shadow-none font-semibold placeholder:font-normal"
                     value={lastName}
                     required
                     disabled={loading}
@@ -194,7 +194,7 @@ const Index = () => {
               <Input
                 type="email"
                 placeholder="Email"
-                className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-300/60 rounded-lg shadow-none"
+                className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-300/60 rounded-lg shadow-none font-semibold placeholder:font-normal"
                 value={email}
                 required
                 disabled={loading}
@@ -205,7 +205,7 @@ const Index = () => {
               <Input
                 type="password"
                 placeholder="Password"
-                className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-300/60 rounded-lg shadow-none"
+                className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-300/60 rounded-lg shadow-none font-semibold placeholder:font-normal"
                 value={password}
                 required
                 disabled={loading}
