@@ -3,21 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import DashboardPlantGrid from "@/components/DashboardPlantGrid";
 import PlantDetailDrawer from "@/components/PlantDetailDrawer";
 import { Loader2 } from "lucide-react";
+import { usePlantsWithSellers, PlantRaw } from "./usePlantsWithSellers";
+import DashboardPlantSuggestionList from "./DashboardPlantSuggestionList";
 
-// Type definitions
-type PlantRaw = {
-  id: string;
-  name: string;
-  price: number;
-  photo_url: string | null;
-  distance: string | null;
-  location: string | null;
-  sellerId: string;
-  seller: string;
-  description?: string | null;
-  type?: string;
-};
-
+// Simple Levenshtein distance calculation for suggestion rendering
 function levenshtein(a: string, b: string): number {
   // Simple Levenshtein distance calculation
   if (!a) return b.length;
@@ -53,11 +42,11 @@ export default function DashboardPlantList({
   minPrice?: string;
   maxPrice?: string;
 }) {
-  const [selectedPlant, setSelectedPlant] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [plants, setPlants] = useState<PlantRaw[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  // Get all plant data from our custom hook
+  const { plants, loading, error } = usePlantsWithSellers();
+  // Get logged-in user id, so we can filter out self-listings
   const [myUserId, setMyUserId] = useState<string | null>(null);
+  const [selectedPlant, setSelectedPlant] = useState<any | null>(null);
 
   // Fetch current user id on mount
   useEffect(() => {
@@ -68,83 +57,7 @@ export default function DashboardPlantList({
     fetchUserId();
   }, []);
 
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-
-    async function fetchPlantsWithProfileNames() {
-      // Step 1: Get ALL plants, now including description.
-      let { data, error } = await supabase
-        .from("plants")
-        .select(`
-          id,
-          name,
-          price,
-          photo_url,
-          description,
-          location,
-          user_id,
-          created_at
-        `)
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        setError("Could not fetch plants.");
-        setLoading(false);
-        return;
-      }
-
-      if (!data) {
-        setError("No data received.");
-        setLoading(false);
-        return;
-      }
-
-      // Step 2: Collect unique seller IDs
-      const userIds = Array.from(
-        new Set(data.map((plant: any) => plant.user_id).filter(Boolean))
-      );
-      // Step 3: Fetch seller profiles in one batch (id, full_name)
-      let profileMap: Record<string, string> = {};
-      if (userIds.length > 0) {
-        const { data: profiles, error: profileErr } = await supabase
-          .from("profiles")
-          .select("id, full_name")
-          .in("id", userIds);
-
-        if (profiles && !profileErr) {
-          // Map id to full_name
-          for (const profile of profiles) {
-            profileMap[profile.id] = profile.full_name || null;
-          }
-        }
-      }
-
-      // Step 4: Map plants adding correct seller name and description
-      const transformed: PlantRaw[] = data.map((plant: any) => ({
-        id: plant.id,
-        name: plant.name,
-        price: Number(plant.price),
-        photo_url: plant.photo_url,
-        distance: "—",
-        location: plant.location ?? "Unlisted",
-        sellerId: plant.user_id,
-        // Use profile name if exists, fallback to user id
-        seller:
-          (plant.user_id && profileMap[plant.user_id]) ||
-          (plant.user_id ? plant.user_id.slice(0, 6) : "Unknown"),
-        description: plant.description ?? null,
-        type: "all",
-      }));
-
-      setPlants(transformed);
-      setLoading(false);
-    }
-
-    fetchPlantsWithProfileNames();
-  }, []);
-
-  // Filter out my own listings if user is logged in
+  // Filtering logic: Remove my own plants, and apply all user filters
   let filteredPlants = plants;
   if (myUserId) {
     filteredPlants = filteredPlants.filter((plant) => plant.sellerId !== myUserId);
@@ -177,7 +90,7 @@ export default function DashboardPlantList({
     minPrice ||
     maxPrice;
 
-  // Adjust gridPlants to include additionalDetails
+  // Adjust gridPlants to fit DashboardPlantGrid + PlantDetailDrawer shape
   const gridPlants = (arr: PlantRaw[]) =>
     arr.map((plant) => ({
       id: plant.id,
@@ -199,6 +112,7 @@ export default function DashboardPlantList({
       </div>
     );
   }
+
   if (error) {
     return (
       <div className="flex items-center justify-center py-12 text-red-700">
@@ -207,6 +121,7 @@ export default function DashboardPlantList({
     );
   }
 
+  // Suggestions when user filter yields nothing
   let otherAreaPlants: PlantRaw[] = [];
   if (didFilter && filteredPlants.length === 0) {
     let suggestionSource = plants.slice();
@@ -229,26 +144,12 @@ export default function DashboardPlantList({
   }
 
   const handlePlantClick = (plant: any) => {
-    console.log("Plant selected for drawer:", plant);
     setSelectedPlant(plant);
   };
 
   if (didFilter && filteredPlants.length === 0) {
     return (
-      <>
-        <div className="text-center text-green-700 col-span-full py-8 font-semibold">
-          No plants found in your area.
-          <div className="mt-2 text-green-800">See other available plants:</div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 w-full mt-4 transition-all">
-          <DashboardPlantGrid plants={gridPlants(otherAreaPlants)} onPlantClick={handlePlantClick} />
-        </div>
-        <PlantDetailDrawer
-          open={!!selectedPlant}
-          plant={selectedPlant}
-          onClose={() => setSelectedPlant(null)}
-        />
-      </>
+      <DashboardPlantSuggestionList otherAreaPlants={otherAreaPlants} gridPlants={gridPlants} />
     );
   }
 
