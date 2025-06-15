@@ -24,10 +24,7 @@ const favoritePlants = [
 export default function FavoritePlants() {
   return (
     <div className="w-full flex flex-col items-center mb-10 mt-16">
-      <h2 className="text-lg font-bold text-green-100 mb-4 text-center drop-shadow">
-        Popular in your neighbourhood
-      </h2>
-      
+      {/* Removed the heading and inner content as requested */}
     </div>
   );
 }
