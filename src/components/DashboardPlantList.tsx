@@ -162,13 +162,18 @@ export default function DashboardPlantList({
     minPrice ||
     maxPrice;
 
-  // Convert to display format
+  // --- CRITICAL: Forward sellerId and seller to PlantDetailDrawer ---
+  // Now shape the plant object for the grid/list and for PlantDetailDrawer:
   const gridPlants = (arr: PlantRaw[]) =>
     arr.map((plant) => ({
-      ...plant,
-      image: plant.photo_url ?? "/placeholder.svg",
+      id: plant.id,
+      name: plant.name,
       price: `$${plant.price}`,
+      image: plant.photo_url ?? "/placeholder.svg",
       distance: plant.distance ?? "—",
+      location: plant.location ?? "Unlisted",
+      seller: plant.seller ?? (plant.sellerId ? plant.sellerId.slice(0, 6) : "Unknown"),
+      sellerId: plant.sellerId,
       type: plant.type ?? "all"
     }));
 
@@ -210,6 +215,12 @@ export default function DashboardPlantList({
     otherAreaPlants = suggestionSource.slice(0, 20);
   }
 
+  // Add debug log for click:
+  const handlePlantClick = (plant: any) => {
+    console.log("Plant selected for drawer:", plant);
+    setSelectedPlant(plant);
+  };
+
   if (didFilter && filteredPlants.length === 0) {
     return (
       <>
@@ -218,7 +229,7 @@ export default function DashboardPlantList({
           <div className="mt-2 text-green-800">See other available plants:</div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 w-full mt-4 transition-all">
-          <DashboardPlantGrid plants={gridPlants(otherAreaPlants)} onPlantClick={setSelectedPlant} />
+          <DashboardPlantGrid plants={gridPlants(otherAreaPlants)} onPlantClick={handlePlantClick} />
         </div>
         <PlantDetailDrawer
           open={!!selectedPlant}
@@ -232,7 +243,7 @@ export default function DashboardPlantList({
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 w-full mt-4 transition-all">
-        <DashboardPlantGrid plants={gridPlants(filteredPlants)} onPlantClick={setSelectedPlant} />
+        <DashboardPlantGrid plants={gridPlants(filteredPlants)} onPlantClick={handlePlantClick} />
       </div>
       <PlantDetailDrawer
         open={!!selectedPlant}
