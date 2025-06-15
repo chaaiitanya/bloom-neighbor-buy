@@ -131,9 +131,9 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
         disabled={submitting}
       />
       <div>
-        <label className="block text-green-800 font-semibold mb-1">Name</label>
+        <label className="block text-green-800 dark:text-green-100 font-semibold mb-1">Name</label>
         <Input
-          className="bg-white"
+          className="bg-white dark:bg-[#232a26] text-green-800 dark:text-green-50 placeholder:text-green-400 dark:placeholder:text-green-500"
           type="text"
           placeholder="e.g. Fiddle Leaf Fig"
           value={name}
@@ -143,9 +143,9 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
         />
       </div>
       <div>
-        <label className="block text-green-800 font-semibold mb-1">Price</label>
+        <label className="block text-green-800 dark:text-green-100 font-semibold mb-1">Price</label>
         <Input
-          className="bg-white"
+          className="bg-white dark:bg-[#232a26] text-green-800 dark:text-green-50 placeholder:text-green-400 dark:placeholder:text-green-500"
           type="number"
           step="0.01"
           min="0"
@@ -157,9 +157,9 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
         />
       </div>
       <div>
-        <label className="block text-green-800 font-semibold mb-1">Description</label>
+        <label className="block text-green-800 dark:text-green-100 font-semibold mb-1">Description</label>
         <Textarea
-          className="bg-white rounded-lg p-2 border border-green-100 min-h-[4rem]"
+          className="bg-white dark:bg-[#232a26] rounded-lg p-2 border border-green-100 min-h-[4rem] text-green-800 dark:text-green-50 placeholder:text-green-400 dark:placeholder:text-green-500"
           placeholder="Any notes about your plant..."
           value={description}
           onChange={e => setDescription(e.target.value)}
@@ -168,10 +168,10 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
         />
       </div>
       <div className="relative">
-        <label className="block text-green-800 font-semibold mb-1">Location</label>
+        <label className="block text-green-800 dark:text-green-100 font-semibold mb-1">Location</label>
         <Input
           type="text"
-          className="bg-white"
+          className="bg-white dark:bg-[#232a26] text-green-800 dark:text-green-50 placeholder:text-green-400 dark:placeholder:text-green-500"
           placeholder="Enter your city (e.g. Dallas, Mumbai, London,...)"
           value={location}
           onChange={e => handleInputChange(e.target.value)}
@@ -187,17 +187,17 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
         {showDropdown && location && (
           <ul
             id="location-autocomplete-list"
-            className="absolute z-50 left-0 w-full bg-white border border-green-100 rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto animate-fade-in"
-            style={{ maxWidth: "100%" }}
+            className="absolute z-50 left-0 w-full bg-white dark:bg-[#232a26] border border-green-100 dark:border-green-800 rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto animate-fade-in"
+            style={{ maxWidth: '100%' }}
             role="listbox"
           >
             {isLoading ? (
-              <li className="px-4 py-2 text-green-600 font-medium">Loading…</li>
+              <li className="px-4 py-2 text-green-600 dark:text-green-300 font-medium">Loading…</li>
             ) : suggestions.length > 0 ? (
               suggestions.map((loc, i) => (
                 <li
                   key={loc + i}
-                  className="px-4 py-2 cursor-pointer hover:bg-green-50 text-green-800 font-medium"
+                  className="px-4 py-2 cursor-pointer hover:bg-green-50 dark:hover:bg-green-900 text-green-800 dark:text-green-50 font-medium"
                   onMouseDown={() => handleSuggestionClick(loc)}
                   role="option"
                   tabIndex={-1}
@@ -207,7 +207,7 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
               ))
             ) : (
               location.length >= 2 && (
-                <li className="px-4 py-2 text-green-700">No cities found</li>
+                <li className="px-4 py-2 text-green-700 dark:text-green-400">No cities found</li>
               )
             )}
           </ul>
