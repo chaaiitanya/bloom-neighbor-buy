@@ -5,6 +5,7 @@ import ChatBox from "./ChatBox";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 type Plant = {
   image: string;
@@ -51,15 +52,14 @@ export default function PlantDetailDrawer({ open, plant, onClose }: PlantDetailD
   // Only allow show chat button to logged-in users that are not the seller
   const canChat = plant.sellerId && myUserId && myUserId !== plant.sellerId;
 
-  // Guest messaging: if NOT logged in, prompt login and redirect back here
+  // Guest messaging: if NOT logged in, show toast instead of navigating to /auth
   const handleMessageSeller = () => {
     if (!myUserId) {
-      // Save current path and plant info to redirect back after login
-      // We'll send ?redirectTo=<current path with state>
-      const params = new URLSearchParams();
-      params.set("redirectTo", location.pathname + location.search + location.hash);
-      // Optionally: can also pass plant id in state, if you want to reopen this drawer after login
-      navigate(`/auth?${params.toString()}`);
+      toast({
+        title: "Sign in required",
+        description: "You must be logged in to message sellers.",
+        variant: "destructive",
+      });
       return;
     }
     setShowChat(true);
