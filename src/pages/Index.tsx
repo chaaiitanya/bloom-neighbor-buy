@@ -18,13 +18,28 @@ const Index = () => {
   const [headerVisible, setHeaderVisible] = useState(false);
   const welcomeRef = useRef<HTMLDivElement>(null);
 
-  // Redirect to dashboard if logged in
+  // Track session state
+  const [session, setSession] = useState<any>(null);
+
   useEffect(() => {
+    // Listen for session changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    // Check for existing session on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+
+      // Redirect to dashboard if logged in
       if (session?.user) {
         navigate("/dashboard", { replace: true });
       }
     });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   // Show glass header when welcome section is out of viewport
@@ -72,7 +87,8 @@ const Index = () => {
         <SproutslyDetails />
         <FavoritePlants />
       </main>
-      <BottomTabNav />
+      {/* Show BottomTabNav only if logged in */}
+      {!!session && <BottomTabNav />}
     </div>
   );
 };
