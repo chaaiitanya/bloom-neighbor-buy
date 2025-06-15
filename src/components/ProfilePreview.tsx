@@ -6,7 +6,7 @@ type ProfileProps = {
   sales?: number;
 };
 
-export function ProfilePreview({ name, avatar, rating = 4.6, sales = 22 }: ProfileProps) {
+export function ProfilePreview({ name, avatar }: ProfileProps) {
   return (
     <div className="flex items-center gap-3">
       <img
@@ -16,9 +16,6 @@ export function ProfilePreview({ name, avatar, rating = 4.6, sales = 22 }: Profi
       />
       <div>
         <div className="text-sm font-semibold text-green-800">{name}</div>
-        <div className="text-xs text-gray-500">
-          ⭐ {rating} · {sales} sales
-        </div>
       </div>
     </div>
   );
