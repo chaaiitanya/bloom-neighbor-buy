@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardPlantGrid from "@/components/DashboardPlantGrid";
@@ -72,10 +71,7 @@ export default function DashboardPlantList({
           photo_url,
           location,
           user_id,
-          created_at,
-          profiles (
-            full_name
-          )
+          created_at
         `)
         .order("created_at", { ascending: false });
 
@@ -100,12 +96,8 @@ export default function DashboardPlantList({
         distance: "—",
         location: plant.location ?? "Unlisted",
         sellerId: plant.user_id,
-        // Use profile full_name if available, otherwise fallback to user_id short
-        seller: plant.profiles?.full_name
-          ? plant.profiles.full_name
-          : plant.user_id
-          ? plant.user_id.slice(0, 6)
-          : "Unknown",
+        // Fallback to short user_id
+        seller: plant.user_id ? plant.user_id.slice(0, 6) : "Unknown",
         type: "all",
       }));
       setPlants(transformed);
