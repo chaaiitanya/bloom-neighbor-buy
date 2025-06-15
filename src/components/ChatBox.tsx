@@ -29,15 +29,20 @@ export default function ChatBox({ otherUserId, myUserId, onClose }: ChatBoxProps
   useEffect(() => {
     const fetchOrCreateChat = async () => {
       setError(null);
+      // Log user IDs for debugging
+      if (!myUserId || !otherUserId) {
+        setError("Missing user information. Try refreshing the page or logging in again.");
+        return;
+      }
       // Get existing chat where user ids match
-      let { data: chats, error } = await supabase
+      let { data: chats, error: findError } = await supabase
         .from("private_chats")
         .select("*")
         .or(`and(participant_a.eq.${myUserId},participant_b.eq.${otherUserId}),and(participant_a.eq.${otherUserId},participant_b.eq.${myUserId})`)
         .limit(1);
 
-      if (error) {
-        setError("Error loading chat.");
+      if (findError) {
+        setError("Error loading chat room: " + findError.message);
         return;
       }
 
@@ -53,7 +58,7 @@ export default function ChatBox({ otherUserId, myUserId, onClose }: ChatBoxProps
           .select()
           .single();
         if (insertError || !newChat) {
-          setError("Unable to start chat.");
+          setError("Unable to start chat: " + (insertError?.message || "Unknown error"));
         } else {
           setChatId(newChat.id);
         }
