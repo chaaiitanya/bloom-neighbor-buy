@@ -9,12 +9,14 @@ import SearchBar from "@/components/SearchBar";
 import LoginBar from "@/components/LoginBar";
 import SproutslyDetails from "@/components/SproutslyDetails";
 import FavoritePlants from "@/components/FavoritePlants";
+import DashboardPlantList from "@/components/DashboardPlantList";
 
 const bgImage = "/lovable-uploads/57e20818-f97d-4a73-ba99-7f6eedf5d5f9.png";
 
 const Index = () => {
   const navigate = useNavigate();
   const [plantType, setPlantType] = useState("All");
+  const [search, setSearch] = useState("");
   const [headerVisible, setHeaderVisible] = useState(false);
   const welcomeRef = useRef<HTMLDivElement>(null);
 
@@ -61,6 +63,19 @@ const Index = () => {
     return () => observer.disconnect();
   }, []);
 
+  // Filter state mapping for demo: map plantType to dashboard filter
+  function getDashboardFilter(pt: string) {
+    // Dashboard expects: "all" | "indoor" | "outdoor" | "succulent" | "flower"
+    if (!pt || pt === "All") return "all";
+    if (pt === "Flower") return "flower";
+    if (pt === "Cactus" || pt === "Herb" || pt === "Shrub" || pt === "Vine" || pt === "Rare" || pt === "Tree") return "indoor"; // Fallback mapping for demo types
+    if (pt === "Succulent") return "succulent";
+    if (pt === "Outdoor") return "outdoor";
+    return "all";
+  }
+
+  const dashboardFilter = getDashboardFilter(plantType);
+
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-start overflow-x-hidden">
       {/* BACKGROUND IMAGE (behind everything) */}
@@ -81,7 +96,16 @@ const Index = () => {
       {/* Main content */}
       <main className="relative z-10 flex flex-col w-full max-w-2xl mx-auto px-2">
         <WelcomeSection ref={welcomeRef} />
-        <SearchBar plantType={plantType} setPlantType={setPlantType} />
+        {/* Pass up search and plantType state, and add a setter for search */}
+        <SearchBar
+          plantType={plantType}
+          setPlantType={setPlantType}
+          setSearch={setSearch}
+        />
+        {/* Live plant results list from Dashboard */}
+        <div className="w-full mt-1">
+          <DashboardPlantList search={search} filter={dashboardFilter} />
+        </div>
         <LoginBar />
         <div className="h-14 md:h-20" />
         <SproutslyDetails />
