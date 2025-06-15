@@ -1,5 +1,6 @@
+
 import { useNavigate } from "react-router-dom";
-import { Settings, Star, Heart, FileText, QrCode, Share2, LogOut } from "lucide-react";
+import { Settings, Heart, QrCode, Share2, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const MENU = [
@@ -9,19 +10,9 @@ const MENU = [
     route: "/profile",
   },
   {
-    icon: <Star className="w-5 h-5 text-yellow-500" />,
-    label: "Stats",
-    route: "/profile/stats",
-  },
-  {
     icon: <Heart className="w-5 h-5 text-red-500" />,
     label: "Favorites",
     route: "/profile/favorites",
-  },
-  {
-    icon: <FileText className="w-5 h-5 text-green-700" />,
-    label: "History",
-    route: "/profile/transactions",
   },
   {
     icon: <QrCode className="w-5 h-5 text-green-600" />,
