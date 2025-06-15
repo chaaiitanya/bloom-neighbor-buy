@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { ProfilePreview } from "@/components/ProfilePreview";
 import BottomTabNav from "@/components/BottomTabNav";
@@ -55,44 +56,61 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-50 to-white pb-20">
-      <div className="p-6 flex flex-col items-center">
-        {/* Top section */}
-        {loading ? (
-          <div className="mb-2 h-12 w-32 rounded-full bg-green-100 animate-pulse" />
-        ) : (
-          <ProfilePreview
-            name={profile?.full_name || "User"}
-            avatar={profile?.avatar_url}
-            rating={profile?.rating ?? 4.6}
-            sales={profile?.sales ?? 22}
-          />
-        )}
-        <div className="mt-2 text-green-700 text-xl font-semibold">
-          {loading ? "..." : profile?.full_name || "User"}
-        </div>
-        <button
-          onClick={() => setEditMode(!editMode)}
-          className="text-green-600 underline mt-1 text-sm"
-        >
-          {editMode ? "Cancel Edit" : "Edit Profile"}
-        </button>
-        <ProfileStats />
-        <ProfileSocialLinks />
-        {editMode ? (
-          <div className="w-full bg-white rounded-2xl p-4 border shadow mt-4">
-            <ProfileEditForm onUpdated={handleProfileUpdated} />
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-100 to-white pb-24">
+      <div className="w-full max-w-xl mx-auto px-3 sm:px-0 mt-4">
+        {/* Card container for profile */}
+        <div className="relative rounded-3xl shadow-xl bg-white/75 border border-green-100 ring-1 ring-green-100 p-6 flex flex-col items-center mb-6 animate-fade-in">
+          {loading ? (
+            <div className="mb-2 h-12 w-32 rounded-full bg-green-100 animate-pulse" />
+          ) : (
+            <ProfilePreview
+              name={profile?.full_name || "User"}
+              avatar={profile?.avatar_url}
+              rating={profile?.rating ?? 4.6}
+              sales={profile?.sales ?? 22}
+            />
+          )}
+          <div className="mt-2 text-green-700 text-xl font-semibold tracking-tight">
+            {loading ? "..." : profile?.full_name || "User"}
           </div>
-        ) : (
+          <button
+            onClick={() => setEditMode(!editMode)}
+            className="text-green-600 underline mt-1 text-sm hover:text-green-800 transition story-link"
+          >
+            {editMode ? "Cancel Edit" : "Edit Profile"}
+          </button>
+          <div className="w-full mt-3">
+            <ProfileStats />
+          </div>
+          <ProfileSocialLinks />
+          {editMode && (
+            <div className="w-full bg-white rounded-2xl p-4 border shadow mt-5">
+              <ProfileEditForm onUpdated={handleProfileUpdated} />
+            </div>
+          )}
+        </div>
+
+        {!editMode && (
           <>
-            <ProfileListings />
-            <div className="w-full bg-white rounded-2xl p-4 border shadow mt-4">
+            {/* Listings */}
+            <div className="mb-6 animate-fade-in">
+              <ProfileListings />
+            </div>
+
+            {/* Favorites */}
+            <div className="w-full rounded-2xl p-4 border border-green-100 bg-green-50/70 shadow mb-4 animate-fade-in">
               <ProfileFavorites />
             </div>
-            <div className="w-full bg-white rounded-2xl p-4 border shadow mt-4">
+            
+            {/* Action bar list */}
+            <div className="w-full max-w-md mx-auto">
               <ProfileActionBar />
             </div>
-            <ProfileQrShare />
+
+            {/* QR Share */}
+            <div className="w-full flex flex-col items-center mt-8 animate-fade-in">
+              <ProfileQrShare />
+            </div>
           </>
         )}
       </div>
@@ -100,3 +118,4 @@ export default function Profile() {
     </div>
   );
 }
+

@@ -45,27 +45,33 @@ export default function ProfileActionBar() {
   };
 
   return (
-    <ul className="w-full flex flex-col gap-2 max-w-md mx-auto mt-2">
+    <ul className="w-full flex flex-col gap-3 shadow-lg rounded-2xl bg-white border border-green-100 py-3 px-2 animate-fade-in">
       {MENU.map((item) => (
         <li key={item.label}>
           <button
             onClick={() => navigate(item.route)}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-green-100 bg-white hover:bg-green-50 shadow-sm transition text-green-800"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-green-50 group transition text-green-800 font-medium focus:outline-none focus:ring-2 focus:ring-green-200"
+            aria-label={item.label}
           >
-            <span className="mr-2">{item.icon}</span>
-            <span className="font-medium">{item.label}</span>
+            <span className="mr-2">
+              {item.icon}
+            </span>
+            <span className="text-base group-hover:text-green-700 transition">
+              {item.label}
+            </span>
           </button>
         </li>
       ))}
       <li>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-green-100 bg-white hover:bg-red-50 shadow-sm transition text-red-700 font-semibold"
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 transition text-red-700 font-semibold border-t border-green-100 mt-1 focus:outline-none focus:ring-2 focus:ring-red-200"
         >
           <LogOut className="w-5 h-5" />
-          <span className="font-medium">Log out</span>
+          <span className="text-base">Log out</span>
         </button>
       </li>
     </ul>
   );
 }
+
