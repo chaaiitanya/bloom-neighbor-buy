@@ -3,7 +3,6 @@ import { ProfilePreview } from "@/components/ProfilePreview";
 import BottomTabNav from "@/components/BottomTabNav";
 import ProfileEditForm from "@/components/ProfileEditForm";
 import ProfileStats from "@/components/ProfileStats";
-import ProfileTransactions from "@/components/ProfileTransactions";
 import ProfileFavorites from "@/components/ProfileFavorites";
 import ProfileQrShare from "@/components/ProfileQrShare";
 import ProfileSocialLinks from "@/components/ProfileSocialLinks";
@@ -58,7 +57,7 @@ export default function Profile() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-50 to-white pb-20">
       <div className="p-6 flex flex-col items-center">
-        <ProfileActionBar />
+        {/* Top section */}
         {loading ? (
           <div className="mb-2 h-12 w-32 rounded-full bg-green-100 animate-pulse" />
         ) : (
@@ -91,7 +90,7 @@ export default function Profile() {
               <ProfileFavorites />
             </div>
             <div className="w-full bg-white rounded-2xl p-4 border shadow mt-4">
-              <ProfileTransactions />
+              <ProfileActionBar />
             </div>
             <ProfileQrShare />
           </>
