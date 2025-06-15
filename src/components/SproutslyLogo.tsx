@@ -1,16 +1,32 @@
 
 import React from "react";
 
-export default function SproutslyLogo({ size = 56, className = "" }: { size?: number; className?: string }) {
+export default function SproutslyLogo({
+  size = 56,
+  className = "",
+}: {
+  size?: number;
+  className?: string;
+}) {
   // Bright green #18c964, dark green #145c2d
   return (
-    <span className={className} style={{ display: "inline-flex", alignItems: "center" }}>
+    <span
+      className={className}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        filter: "drop-shadow(0 3px 10px rgba(0,0,0,0.27))", // strong SVG shadow
+      }}
+    >
       <svg
         width={size}
         height={size}
         viewBox="0 0 48 48"
         fill="none"
-        style={{ marginRight: 12 }}
+        style={{
+          marginRight: 12,
+          filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.32))", // more pronounced
+        }}
         xmlns="http://www.w3.org/2000/svg"
       >
         <ellipse
@@ -46,7 +62,9 @@ export default function SproutslyLogo({ size = 56, className = "" }: { size?: nu
           color: "#18c964",
           letterSpacing: "-1.5px",
           lineHeight: 1,
-          textShadow: "0 2px 10px #02411e20"
+          // Strong multi-layer text-shadow for contrast on any glass background
+          textShadow:
+            "0 2px 8px #212121cc, 0 0px 2px #000, 0 0px 1px #145c2d70",
         }}
       >
         Sproutsly

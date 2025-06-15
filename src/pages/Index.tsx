@@ -120,7 +120,7 @@ const Index = () => {
       <div className="relative z-10 w-full max-w-md mx-auto flex flex-col justify-center items-center min-h-[94vh]">
         <div className="w-full rounded-3xl shadow-2xl px-8 pt-10 pb-6 flex flex-col items-center"
           style={{
-            background: "rgba(255,255,255,0.13)",
+            background: "rgba(255,255,255,0.19)", // Slightly more opaque for text contrast
             border: "2px solid rgba(255,255,255,0.22)",
             boxShadow:
               "0 4px 36px 0 rgba(52,89,68,0.08), 0 2px 14px 0 rgba(58,90,64,0.13)"
@@ -135,13 +135,18 @@ const Index = () => {
             style={{
               color: brightGreen,
               fontFamily: 'Nunito, sans-serif',
-              textShadow: "0 2px 10px #02411e22"
+              // Strong shadow under headline for visibility (same as logo)
+              textShadow:
+                "0 2px 10px #212121dd, 0 1px 6px #0008, 0 0px 1px #18c964b0",
             }}
           >
             Sproutsly
           </h1>
           <div className="text-xl sm:text-2xl font-semibold mb-5 mt-1 text-center max-w-xs"
-              style={{ color: '#2c652e' }}
+              style={{
+                color: '#2c652e',
+                textShadow: "0 1px 5px #fff9, 0 2px 14px #193e1755" // Gentle white haze
+              }}
           >
             Swap, give, or sell plants—right in your neighborhood.
           </div>
