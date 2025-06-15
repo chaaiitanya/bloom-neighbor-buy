@@ -1,6 +1,5 @@
-
 import { MapPin } from "lucide-react";
-import { Heart, HeartOff } from "lucide-react";
+import { Heart } from "lucide-react";
 import { usePlantFavorite } from "@/hooks/usePlantFavorite";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -19,7 +18,13 @@ type PlantProps = {
 export function PlantCard({ image, name, price, distance, location, seller, onClick, id }: PlantProps) {
   // Show favorite button if id is provided
   const { isFavorite, toggleFavorite, loading } = usePlantFavorite(id);
-  // We prevent click bubbling from fav button
+
+  // Track if image failed to load
+  const [imgError, setImgError] = useState(false);
+
+  // Use "/placeholder.svg" if image is missing or failed to load
+  const showImage = !imgError && image ? image : "/placeholder.svg";
+
   return (
     <div
       className="bg-white/75 dark:bg-[#21271f]/80 rounded-2xl shadow transition-all duration-200 border border-green-100 dark:border-[#223128] cursor-pointer overflow-hidden flex flex-col
@@ -32,12 +37,21 @@ export function PlantCard({ image, name, price, distance, location, seller, onCl
     >
       <div className="relative">
         <img
-          src={image}
+          src={showImage}
           alt={name}
-          className="w-full h-44 object-cover"
+          className="w-full h-44 object-cover bg-[#f6faf7]"
           loading="lazy"
+          onError={() => setImgError(true)}
           style={{ background: "#f6faf7" }}
         />
+        {/* Optionally overlay a fallback icon if broken (purely visual) */}
+        {imgError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-[#f6faf7]">
+            <span className="text-4xl text-green-300" role="img" aria-label="Plant placeholder">
+              🍃
+            </span>
+          </div>
+        )}
         {id && (
           <button
             onClick={e => {
