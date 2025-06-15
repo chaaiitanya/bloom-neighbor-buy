@@ -21,6 +21,7 @@ export default function DashboardPlantList({
   // State for plant details drawer
   const [selectedPlant, setSelectedPlant] = useState<any | null>(null);
 
+  // Original, unfiltered list for fallback
   let filteredPlants = demoPlants;
 
   // Filter by range (distance in km)
@@ -59,6 +60,36 @@ export default function DashboardPlantList({
     );
   }
 
+  // Check if any filter/search has been applied
+  const didFilter =
+    (search && search.trim()) ||
+    (filter && filter !== "all") ||
+    (typeof range === "number" && range !== 10) ||
+    minPrice ||
+    maxPrice;
+
+  // If no plants found after search/filter, show all available as suggestion
+  if (didFilter && filteredPlants.length === 0) {
+    return (
+      <>
+        <div className="text-center text-green-700 col-span-full py-8 font-semibold">
+          No plants found in your area.
+          <div className="mt-2 text-green-800">
+            See other available plants:
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 w-full mt-4 transition-all">
+          <DashboardPlantGrid plants={demoPlants} onPlantClick={setSelectedPlant} />
+        </div>
+        <PlantDetailDrawer
+          open={!!selectedPlant}
+          plant={selectedPlant}
+          onClose={() => setSelectedPlant(null)}
+        />
+      </>
+    );
+  }
+
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 w-full mt-4 transition-all">
@@ -72,3 +103,4 @@ export default function DashboardPlantList({
     </>
   );
 }
+
