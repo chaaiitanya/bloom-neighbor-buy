@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,6 +25,7 @@ export default function CommunityChatBox({
   const [message, setMessage] = useState("");
   const [user, setUser] = useState<any>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   // Fetch current user
   useEffect(() => {
@@ -122,6 +122,22 @@ export default function CommunityChatBox({
     // Message will still appear from realtime as well, but duplicates are prevented above
   };
 
+  // Add the keydown handler for Textarea
+  const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      // Submit form if enabled
+      if (
+        !sending &&
+        user &&
+        message.trim() &&
+        formRef.current
+      ) {
+        formRef.current.requestSubmit(); // Supported in modern browsers
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col h-[68vh] max-h-[500px] min-h-[320px] bg-white dark:bg-[#232a26] rounded-xl shadow-lg">
       <div className="flex items-center px-4 py-3 border-b border-green-100 dark:border-[#2a4033]">
@@ -175,12 +191,14 @@ export default function CommunityChatBox({
         </div>
       </ScrollArea>
       <form
+        ref={formRef}
         onSubmit={handleSend}
         className="p-3 border-t border-green-100 dark:border-[#2a4033] flex gap-2"
       >
         <Textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleTextareaKeyDown} // NEW: enable sending with Enter
           placeholder={user ? "Type your message…" : "Sign in to send messages"}
           disabled={sending || !user}
           className="resize-none flex-1 min-h-[42px] max-h-[100px] bg-green-50/50 dark:bg-[#233024]/80"
