@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { ProfilePreview } from "@/components/ProfilePreview";
 import BottomTabNav from "@/components/BottomTabNav";
@@ -56,12 +55,12 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-100 to-white pb-24">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-100 to-white dark:from-[#181f1a] dark:to-[#232a26]/80 pb-24 transition-colors">
       <div className="w-full max-w-xl mx-auto px-3 sm:px-0 mt-4">
         {/* Card container for profile */}
-        <div className="relative rounded-3xl shadow-xl bg-white/75 border border-green-100 ring-1 ring-green-100 p-6 flex flex-col items-center mb-6 animate-fade-in">
+        <div className="relative rounded-3xl shadow-xl bg-white/75 dark:bg-[#21271f]/80 border border-green-100 dark:border-[#223128] ring-1 ring-green-100 p-6 flex flex-col items-center mb-6 animate-fade-in transition-colors">
           {loading ? (
-            <div className="mb-2 h-12 w-32 rounded-full bg-green-100 animate-pulse" />
+            <div className="mb-2 h-12 w-32 rounded-full bg-green-100 dark:bg-[#232a26]/60 animate-pulse" />
           ) : (
             <ProfilePreview
               fullName={profile?.full_name || "User"}
@@ -70,12 +69,12 @@ export default function Profile() {
               sales={profile?.sales ?? 22}
             />
           )}
-          <div className="mt-2 text-green-700 text-xl font-semibold tracking-tight">
+          <div className="mt-2 text-green-700 dark:text-green-100 text-xl font-semibold tracking-tight">
             {loading ? "..." : profile?.full_name || "User"}
           </div>
           <button
             onClick={() => setEditMode(!editMode)}
-            className="text-green-600 underline mt-1 text-sm hover:text-green-800 transition story-link"
+            className="text-green-600 underline mt-1 text-sm hover:text-green-800 dark:text-green-300 dark:hover:text-green-100 transition story-link"
           >
             {editMode ? "Cancel Edit" : "Edit Profile"}
           </button>
@@ -84,7 +83,7 @@ export default function Profile() {
           </div>
           <ProfileSocialLinks />
           {editMode && (
-            <div className="w-full bg-white rounded-2xl p-4 border shadow mt-5">
+            <div className="w-full bg-white dark:bg-[#181f1a]/85 rounded-2xl p-4 border border-green-100 dark:border-[#223128] shadow mt-5 transition-colors">
               <ProfileEditForm onUpdated={handleProfileUpdated} />
             </div>
           )}
@@ -98,7 +97,7 @@ export default function Profile() {
             </div>
 
             {/* Favorites */}
-            <div className="w-full rounded-2xl p-4 border border-green-100 bg-green-50/70 shadow mb-4 animate-fade-in">
+            <div className="w-full rounded-2xl p-4 border border-green-100 dark:border-[#223128] bg-green-50/70 dark:bg-[#232a26]/85 shadow mb-4 animate-fade-in transition-colors">
               <ProfileFavorites />
             </div>
             
@@ -118,4 +117,3 @@ export default function Profile() {
     </div>
   );
 }
-
