@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -67,7 +66,7 @@ export default function DashboardProfileAvatar() {
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => navigate("/profile/info")}
+          onClick={() => navigate("/profile")}
           className="gap-2"
         >
           <Settings className="w-4 h-4 text-green-600" />
