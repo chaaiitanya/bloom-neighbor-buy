@@ -4,6 +4,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+import PlantImageUpload from "@/components/PlantImageUpload";
+import { useCityAutocomplete } from "@/hooks/useCityAutocomplete";
 
 type PostPlantFormProps = {
   afterPost?: () => void;
@@ -25,81 +27,23 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [location, setLocation] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Location autocomplete state
-  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  // Use autocomplete hook for city/location
+  const {
+    cityInput: location,
+    setCityInput: setLocation,
+    suggestions,
+    isLoading,
+    showDropdown,
+    setShowDropdown,
+    handleInputChange,
+    handleSuggestionClick,
+    handleBlur,
+  } = useCityAutocomplete();
+
   const locationInputRef = useRef<HTMLInputElement>(null);
-
   const navigate = useNavigate();
-
-  // Debounce timer for fetch
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Fetch city suggestions from Mapbox
-  const fetchSuggestions = async (query: string) => {
-    setIsLoadingSuggestions(true);
-    setSuggestions([]);
-    const mapboxToken = await getMapboxToken();
-    if (!mapboxToken) {
-      setSuggestions([]);
-      setIsLoadingSuggestions(false);
-      return;
-    }
-    try {
-      // Cities only & limit results for performance
-      const endpoint = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-        query
-      )}.json?access_token=${mapboxToken}&autocomplete=true&types=place&limit=6&language=en`;
-      const resp = await fetch(endpoint);
-      const json = await resp.json();
-      // Filter unique place names
-      const citySuggestions =
-        json?.features?.map((f: any) => f.place_name)?.filter(Boolean) || [];
-      setSuggestions(citySuggestions);
-    } catch {
-      setSuggestions([]);
-    }
-    setIsLoadingSuggestions(false);
-  };
-
-  // Handle location changes and trigger suggestions
-  function handleLocationInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = e.target.value;
-    setLocation(value);
-    setShowLocationDropdown(true);
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-    if (value.trim().length < 2) {
-      setSuggestions([]);
-      return;
-    }
-    debounceRef.current = setTimeout(() => {
-      fetchSuggestions(value.trim());
-    }, 250); // Debounce API calls
-  }
-
-  function handleSuggestionClick(loc: string) {
-    setLocation(loc);
-    setShowLocationDropdown(false);
-    setSuggestions([]);
-    locationInputRef.current?.blur();
-  }
-
-  function handleLocationBlur() {
-    setTimeout(() => setShowLocationDropdown(false), 110);
-  }
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) {
-      const file = e.target.files[0];
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,24 +98,7 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
 
   return (
     <form className="p-6 space-y-5" onSubmit={handleSubmit}>
-      <div>
-        <label className="block text-green-800 font-semibold mb-2">Plant photo</label>
-        <div className="w-full h-40 bg-green-50 rounded-xl border border-green-100 flex items-center justify-center relative overflow-hidden mb-2">
-          {imagePreview ? (
-            <img src={imagePreview} alt="Preview" className="w-full h-full object-cover rounded-xl transition" />
-          ) : (
-            <span className="text-gray-400">Add a photo</span>
-          )}
-          <input
-            type="file"
-            accept="image/*"
-            className="opacity-0 absolute inset-0 cursor-pointer"
-            onChange={handleImageChange}
-            aria-label="Upload plant photo"
-            disabled={submitting}
-          />
-        </div>
-      </div>
+      <PlantImageUpload preview={imagePreview} setPreview={setImagePreview} disabled={submitting} />
       <div>
         <label className="block text-green-800 font-semibold mb-1">Name</label>
         <Input
@@ -216,25 +143,24 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
           className="bg-white"
           placeholder="Enter your city (e.g. Mumbai, London,...)"
           value={location}
-          onChange={handleLocationInputChange}
+          onChange={e => handleInputChange(e.target.value)}
           required
           disabled={submitting}
           autoComplete="off"
           ref={locationInputRef}
-          onFocus={() => setShowLocationDropdown(true)}
-          onBlur={handleLocationBlur}
+          onFocus={() => setShowDropdown(true)}
+          onBlur={handleBlur}
           aria-autocomplete="list"
           aria-controls="location-autocomplete-list"
         />
-        {/* Autocomplete dropdown for locations */}
-        {showLocationDropdown && location && (
+        {showDropdown && location && (
           <ul
             id="location-autocomplete-list"
             className="absolute z-50 left-0 w-full bg-white border border-green-100 rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto animate-fade-in"
             style={{ maxWidth: "100%" }}
             role="listbox"
           >
-            {isLoadingSuggestions ? (
+            {isLoading ? (
               <li className="px-4 py-2 text-green-600 font-medium">Loading…</li>
             ) : suggestions.length > 0 ? (
               suggestions.map((loc, i) => (
