@@ -102,78 +102,86 @@ const Index = () => {
   };
 
   return (
-    <div 
-      className="relative min-h-screen flex items-center justify-center bg-no-repeat bg-cover"
+    <div
+      className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-[#154321] to-[#19391d] bg-no-repeat bg-cover"
       style={{
-        backgroundImage: `url(${bgImage})`,
-        backgroundPosition: "center",
+        backgroundImage: "none",
       }}
     >
-      {/* BG Blur & dark overlay */}
-      <div className="absolute inset-0 z-0" style={{
-        background: "rgba(13,36,18,0.62)",
-        backdropFilter: "blur(7px)",
-        WebkitBackdropFilter: "blur(7px)"
-      }} />
-
-      {/* Glass card */}
-      <div className="relative z-10 w-full max-w-md mx-auto flex flex-col justify-center items-center min-h-[94vh]">
-        <div className="w-full rounded-3xl shadow-2xl px-8 pt-10 pb-6 flex flex-col items-center"
+      {/* BG Blur & overlay */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background: "linear-gradient(135deg,rgba(22,52,21,0.95) 50%,rgba(15,34,16,0.9) 100%)",
+          backdropFilter: "blur(3.5px)",
+          WebkitBackdropFilter: "blur(3.5px)"
+        }}
+      />
+      {/* Central Card */}
+      <div
+        className="relative z-10 w-full max-w-md mx-auto flex flex-col justify-center items-center min-h-[90vh]"
+      >
+        <div
+          className="w-full rounded-[2.2rem] shadow-2xl px-8 pt-10 pb-8 flex flex-col items-center"
           style={{
-            background: "rgba(255,255,255,0.32)", // Increased opacity for max contrast
-            border: "2px solid rgba(255,255,255,0.22)",
-            boxShadow:
-              "0 4px 36px 0 rgba(52,89,68,0.08), 0 2px 14px 0 rgba(58,90,64,0.13)"
+            background: "rgba(15,32,17,0.925)",
+            border: "2.5px solid rgba(35,87,42,0.21)",
+            boxShadow: "0 6px 32px 0 rgba(10,25,18,0.21), 0 1.5px 16px 0 rgba(15,53,36,0.21)"
           }}
         >
-          {/* Logo and heading */}
-          <div className="mb-3">
-            <SproutslyLogo size={48} />
+          {/* Logo and App Name */}
+          <div className="flex flex-col items-center gap-1 mb-2">
+            <SproutslyLogo size={38} />
+            <span className="font-bold text-[1.45rem] text-[#55e988] tracking-tight mt-1" style={{ fontFamily: 'Nunito, sans-serif' }}>
+              Sproutsly
+            </span>
           </div>
+          {/* Main Headline */}
           <h1
-            className="font-extrabold text-5xl mb-2 text-center tracking-tighter select-none drop-shadow"
+            className="font-extrabold text-4xl md:text-5xl tracking-tight text-center mb-1 mt-2"
             style={{
-              color: brightGreen,
-              fontFamily: 'Nunito, sans-serif',
-              // Strong shadow under headline for visibility (same as logo)
-              textShadow:
-                "0 2px 10px #212121dd, 0 1px 6px #0008, 0 0px 1px #18c964b0",
+              color: "#41df71",
+              fontFamily: "Nunito, sans-serif",
+              letterSpacing: "-1px",
             }}
           >
             Sproutsly
           </h1>
-          <div className="text-xl sm:text-2xl font-semibold mb-5 mt-1 text-center max-w-xs"
-              style={{
-                color: '#2c652e',
-                textShadow: "0 1px 5px #fff9, 0 2px 14px #193e1755" // Gentle white haze
-              }}
+          <div
+            className="text-lg md:text-2xl font-bold mb-6 mt-0.5 text-center max-w-xs"
+            style={{
+              color: "#41df71", // Lighter green
+              fontFamily: "Nunito, sans-serif",
+              letterSpacing: "-0.019em",
+            }}
           >
-            Swap, give, or sell plants—right in your neighborhood.
+            Swap, give, or sell plants—<br className="hidden md:block" />right in your neighborhood.
           </div>
-          
-          {/* Auth Form */}
+
+          {/* Auth Form / Sign In */}
           {!session && (
             <form
               autoComplete="off"
-              className="w-full flex flex-col items-center gap-5"
+              className="w-full flex flex-col items-center"
               onSubmit={handleAuth}
             >
-              <div className="flex flex-col items-center -mt-2 mb-2">
-                <LogIn className="w-6 h-6" style={{ color: brightGreen }} />
+              <div className="flex flex-col items-center mb-3">
                 <span
-                  className="font-semibold mb-1 text-lg cursor-pointer"
-                  style={{ color: brightGreen }}
-                  onClick={() => setMode(mode === "login" ? "signup" : "login")}
+                  className="font-semibold mb-2 text-xl"
+                  style={{
+                    color: "#57e88e",
+                    letterSpacing: "-0.011em",
+                  }}
                 >
                   {mode === "login" ? "Sign In" : "Sign Up"}
                 </span>
               </div>
               {mode === "signup" && (
-                <div className="flex gap-2 w-full">
+                <div className="flex gap-2 w-full mb-2">
                   <Input
                     type="text"
                     placeholder="First name"
-                    className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-200/90 rounded-lg shadow-none font-extrabold text-base placeholder:font-semibold placeholder:text-base"
+                    className="bg-[#17231b] border-none focus:ring-2 focus:ring-[#47ff95] text-white placeholder:text-[#aecab9] rounded-xl shadow-none font-semibold text-lg h-12"
                     value={firstName}
                     required
                     disabled={loading}
@@ -183,7 +191,7 @@ const Index = () => {
                   <Input
                     type="text"
                     placeholder="Last name"
-                    className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-200/90 rounded-lg shadow-none font-extrabold text-base placeholder:font-semibold placeholder:text-base"
+                    className="bg-[#17231b] border-none focus:ring-2 focus:ring-[#47ff95] text-white placeholder:text-[#aecab9] rounded-xl shadow-none font-semibold text-lg h-12"
                     value={lastName}
                     required
                     disabled={loading}
@@ -194,7 +202,7 @@ const Index = () => {
               <Input
                 type="email"
                 placeholder="Email"
-                className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-200/90 rounded-lg shadow-none font-extrabold text-base placeholder:font-semibold placeholder:text-base"
+                className="bg-[#121915] border-none focus:ring-2 focus:ring-[#41df71] text-white placeholder:text-[#aecab9] rounded-xl shadow-none font-normal text-lg h-12 mb-3"
                 value={email}
                 required
                 disabled={loading}
@@ -205,22 +213,20 @@ const Index = () => {
               <Input
                 type="password"
                 placeholder="Password"
-                className="bg-zinc-900 border-none focus:ring-2 focus:ring-[#18c964] text-white placeholder:text-zinc-200/90 rounded-lg shadow-none font-extrabold text-base placeholder:font-semibold placeholder:text-base"
+                className="bg-[#121915] border-none focus:ring-2 focus:ring-[#41df71] text-white placeholder:text-[#aecab9] rounded-xl shadow-none font-normal text-lg h-12 mb-3"
                 value={password}
                 required
                 disabled={loading}
                 onChange={e => setPassword(e.target.value)}
                 autoComplete={mode === "login" ? "current-password" : "new-password"}
               />
-              {error && <div className="w-full text-red-500 text-sm text-center -mt-3">{error}</div>}
+              {error && <div className="w-full text-red-400 text-sm text-center -mt-1 mb-2">{error}</div>}
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-12 font-bold text-lg rounded-xl transition-all"
+                className="w-full h-12 font-bold text-[1.3rem] rounded-xl bg-[#41df71] hover:bg-[#34c75d] text-[#0d2412] shadow-md transition-all mb-2"
                 style={{
-                  backgroundColor: brightGreen,
-                  color: "#fff",
-                  boxShadow: "0 2px 16px 0 #15ba5b2b"
+                  boxShadow: "0 2px 16px 0 #15ba5b20"
                 }}
               >
                 {loading
@@ -233,9 +239,9 @@ const Index = () => {
               </Button>
               <button
                 type="button"
-                className="mt-1 transition text-base w-full text-center font-medium underline underline-offset-4"
+                className="transition w-full text-base text-center font-medium underline underline-offset-2 mt-2"
                 style={{
-                  color: brightGreen
+                  color: "#41df71"
                 }}
                 onClick={() => setMode(mode === "login" ? "signup" : "login")}
               >
@@ -249,18 +255,18 @@ const Index = () => {
           {/* Why Sproutsly */}
           <div className="mt-8 w-full flex flex-col items-center">
             <h3
-              className="text-2xl font-bold mb-3 text-center"
-              style={{ color: "#2c652e"}}
+              className="text-xl font-bold mb-3 text-center"
+              style={{ color: "#7affaf", fontFamily: "Nunito, sans-serif" }}
             >
               Why Sproutsly?
             </h3>
-            <ul className="mb-1 text-base space-y-3"
-                style={{ color: "#224421" }}
+            <ul className="mb-1 text-[1.09rem] space-y-3 font-normal w-full"
+              style={{ color: "#81f3ad", fontFamily: "Nunito, sans-serif" }}
             >
-              <li>🌱 Swap, give, or sell plants with neighbors easily</li>
-              <li>📷 Share photos and tips about your plant babies</li>
-              <li>🧑‍🌾 Join a green community, learn and grow together</li>
-              <li>🔍 Discover rare finds near you</li>
+              <li>🌱 <span className="font-normal ml-0.5">Swap, give, or sell plants with&nbsp;neighbors easily</span></li>
+              <li>📷 <span className="font-normal ml-0.5">Share photos and tips about your plant babies</span></li>
+              <li>🧑‍🌾 <span className="font-normal ml-0.5">Join a green community, learn and grow together</span></li>
+              <li>🔍 <span className="font-normal ml-0.5">Discover rare finds near you</span></li>
             </ul>
           </div>
         </div>
