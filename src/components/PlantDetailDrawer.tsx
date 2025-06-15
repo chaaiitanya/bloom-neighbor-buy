@@ -83,9 +83,9 @@ export default function PlantDetailDrawer({ open, plant, onClose }: PlantDetailD
             <h2 className="text-xl font-bold text-green-700">{plant.name}</h2>
             <div className="text-green-800 font-bold text-lg">{plant.price}</div>
           </div>
-          <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
+          <div className="flex items-center gap-2 text-xs text-gray-500 mb-2 font-semibold">
             <MapPin className="w-4 h-4 text-green-400" />
-            <span>{plant.location}</span>
+            <span className="px-1 py-0.5 rounded bg-green-50 text-green-700 border border-green-200">{plant.location}</span>
             <span>• {plant.distance} away</span>
           </div>
           <div className="my-3">

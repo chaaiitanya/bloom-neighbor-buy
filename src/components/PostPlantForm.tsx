@@ -87,6 +87,12 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
       });
       return;
     }
+    // --- enforce city recognition ---
+    const locStandardized = location.trim().toLowerCase();
+    if (locStandardized.length < 2) {
+      toast({ title: "Please enter a valid city.", variant: "destructive" });
+      return;
+    }
     setSubmitting(true);
 
     const { data: userData } = await supabase.auth.getUser();
@@ -201,7 +207,7 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
         />
       </div>
       <div className="relative">
-        <label className="block text-green-800 dark:text-green-100 font-semibold mb-1">Location</label>
+        <label className="block text-green-800 dark:text-green-100 font-semibold mb-1">Location (City)</label>
         <Input
           type="text"
           className="bg-white dark:bg-[#232a26] text-green-800 dark:text-green-50 placeholder:text-green-400 dark:placeholder:text-green-500"

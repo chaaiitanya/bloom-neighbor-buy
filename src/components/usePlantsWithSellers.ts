@@ -81,27 +81,25 @@ export function usePlantsWithSellers(userCity?: string) {
       }
 
       // Step 4: Map plants adding correct seller name and description
+      const searchCity = (userCity ?? "").trim().toLowerCase();
+
       const transformed: PlantRaw[] = data.map((plant: any) => {
         // Get seller-naming priority: full_name > `${first_name} ${last_name}` > Unknown Seller
         const profile = plant.user_id && profileMap[plant.user_id] ? profileMap[plant.user_id] : null;
         let sellerName = "Unknown Seller";
         if (profile) {
-          if (profile.full_name && profile.full_name.length > 0) {
-            sellerName = profile.full_name;
-          } else if ((profile.first_name && profile.first_name.length > 0) || (profile.last_name && profile.last_name.length > 0)) {
+          if (profile.full_name && profile.full_name.length > 0) sellerName = profile.full_name;
+          else if ((profile.first_name?.length || 0) > 0 || (profile.last_name?.length || 0) > 0) {
             const nameArr = [profile.first_name, profile.last_name].filter(Boolean);
             sellerName = nameArr.length ? nameArr.join(" ") : "Unknown Seller";
           }
         }
 
-        console.log(
-          `[Plant "${plant.name}"] SellerId: ${plant.user_id} | Seller Name: "${sellerName}"`
-        );
+        // Lowercase for normalization
+        const sellerCity = (plant.location ?? "").trim().toLowerCase();
 
-        // Calculate city-to-city distance if both cities known, else use "—"
-        const sellerCity = plant.location || "";
-        const userCityValue = userCity || "";
-        const cityDistance = getCityDistanceKm(userCityValue, sellerCity);
+        // City-to-city distance (standardized to lower)
+        const cityDistance = getCityDistanceKm(searchCity, sellerCity);
 
         return {
           id: plant.id,

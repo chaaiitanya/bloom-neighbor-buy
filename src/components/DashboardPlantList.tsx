@@ -43,8 +43,7 @@ export default function DashboardPlantList({
   minPrice?: string;
   maxPrice?: string;
 }) {
-  // Pass the user's city (from search bar) to the hook,
-  // which is used to calculate distances from seller city to searched city.
+  // Pass the user's city (from search bar) to the hook, used for city-to-city distance.
   const { plants, loading, error } = usePlantsWithSellers(search);
 
   // Get logged-in user id, so we can filter out self-listings
@@ -60,23 +59,19 @@ export default function DashboardPlantList({
     fetchUserId();
   }, []);
 
-  // Filtering logic: Remove my own plants, and apply all user filters
+  // Always prioritize/sort plants by city distance (if user's city is available)
+  const userCity = search?.trim();
   let filteredPlants = plants;
+
+  // Remove own plants
   if (myUserId) {
     filteredPlants = filteredPlants.filter((plant) => plant.sellerId !== myUserId);
   }
+  // Filter by type
   if (filter && filter !== "all") {
     filteredPlants = filteredPlants.filter((plant) => plant.type === filter);
   }
-  if (search && search.trim()) {
-    const q = search.trim().toLowerCase();
-    filteredPlants = filteredPlants.filter(
-      (plant) =>
-        plant.name.toLowerCase().includes(q) ||
-        (plant.location?.toLowerCase() || "").includes(q) ||
-        plant.seller.toLowerCase().includes(q)
-    );
-  }
+  // Price filtering
   if (minPrice && !isNaN(Number(minPrice))) {
     const min = Number(minPrice);
     filteredPlants = filteredPlants.filter((plant) => plant.price >= min);
@@ -84,6 +79,20 @@ export default function DashboardPlantList({
   if (maxPrice && !isNaN(Number(maxPrice))) {
     const max = Number(maxPrice);
     filteredPlants = filteredPlants.filter((plant) => plant.price <= max);
+  }
+  // Enhanced: If city is present, show plants in that city first, then order by distance
+  if (userCity && userCity.length > 0) {
+    filteredPlants = filteredPlants
+      .map(plant => ({
+        ...plant,
+        _distanceNum: plant.distance && plant.distance !== "—" ? parseInt(plant.distance) : 99999,
+        _cityMatch: plant.location && plant.location.toLowerCase() === userCity.toLowerCase(),
+      }))
+      .sort((a, b) => {
+        if (a._cityMatch && !b._cityMatch) return -1;
+        if (!a._cityMatch && b._cityMatch) return 1;
+        return a._distanceNum - b._distanceNum;
+      });
   }
 
   const didFilter =

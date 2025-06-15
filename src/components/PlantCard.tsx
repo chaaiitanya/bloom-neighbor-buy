@@ -1,4 +1,3 @@
-
 import { MapPin } from "lucide-react";
 import { Heart } from "lucide-react";
 import { usePlantFavorite } from "@/hooks/usePlantFavorite";
@@ -87,12 +86,14 @@ export function PlantCard({
       <div className="p-3 flex-1 flex flex-col justify-between">
         <div>
           <div className="flex justify-between items-center">
-            <h2 className="text-base font-semibold text-green-700 dark:text-green-100 truncate">{name}</h2>
+            <h2 className="text-base font-semibold text-green-700 dark:text-green-100 truncate">
+              {name}
+            </h2>
             <div className="text-green-800 dark:text-green-200 font-bold text-lg">{price}</div>
           </div>
-          <div className="flex items-center text-xs text-gray-500 dark:text-gray-300 mt-1">
-            <MapPin className="w-4 h-4 mr-1 text-green-400 dark:text-green-300" />
-            <span>{location}</span>
+          {/* Always show exact city and location info, make it clear and prominent */}
+          <div className="flex items-center text-xs text-gray-500 dark:text-gray-300 mt-1 font-semibold gap-1">
+            <span className="px-1 py-0.5 rounded bg-green-50 text-green-700 border border-green-200">{location}</span>
             <span className="mx-2">•</span>
             <span>{distance}</span>
           </div>
@@ -107,4 +108,3 @@ export function PlantCard({
     </div>
   );
 }
-
