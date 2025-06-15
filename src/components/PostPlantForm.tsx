@@ -5,23 +5,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 
-// Example locations for generic address autocomplete
-const exampleLocations = [
-  "Sunnydale",
-  "Greenfield",
-  "Oakwood",
-  "Midtown",
-  "Maplewood",
-  "Riverside",
-  "Hillcrest",
-  "Evergreen",
-  "Garden Oaks",
-  "Meadow Lane",
-  "Brookfield"
-];
-
 type PostPlantFormProps = {
   afterPost?: () => void;
+};
+
+// Helper to get Mapbox public token from Supabase Edge Environment
+const getMapboxToken = async (): Promise<string | null> => {
+  const { data, error } = await supabase.functions.invoke("get-secret", {
+    body: { key: "MAPBOX_PUBLIC_TOKEN" },
+  });
+  if (error) {
+    return null;
+  }
+  return data?.secret ?? null;
 };
 
 export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
@@ -32,38 +28,76 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
   const [location, setLocation] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Autocomplete state
+  // Location autocomplete state
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const locationInputRef = useRef<HTMLInputElement>(null);
 
   const navigate = useNavigate();
 
-  // Filtered location suggestions
-  const filteredLocations = location
-    ? exampleLocations.filter(loc =>
-        loc.toLowerCase().includes(location.trim().toLowerCase())
-      )
-    : [];
+  // Debounce timer for fetch
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Handle location suggestion selection
+  // Fetch city suggestions from Mapbox
+  const fetchSuggestions = async (query: string) => {
+    setIsLoadingSuggestions(true);
+    setSuggestions([]);
+    const mapboxToken = await getMapboxToken();
+    if (!mapboxToken) {
+      setSuggestions([]);
+      setIsLoadingSuggestions(false);
+      return;
+    }
+    try {
+      // Cities only & limit results for performance
+      const endpoint = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+        query
+      )}.json?access_token=${mapboxToken}&autocomplete=true&types=place&limit=6&language=en`;
+      const resp = await fetch(endpoint);
+      const json = await resp.json();
+      // Filter unique place names
+      const citySuggestions =
+        json?.features?.map((f: any) => f.place_name)?.filter(Boolean) || [];
+      setSuggestions(citySuggestions);
+    } catch {
+      setSuggestions([]);
+    }
+    setIsLoadingSuggestions(false);
+  };
+
+  // Handle location changes and trigger suggestions
+  function handleLocationInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    setLocation(value);
+    setShowLocationDropdown(true);
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    if (value.trim().length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    debounceRef.current = setTimeout(() => {
+      fetchSuggestions(value.trim());
+    }, 250); // Debounce API calls
+  }
+
   function handleSuggestionClick(loc: string) {
     setLocation(loc);
     setShowLocationDropdown(false);
+    setSuggestions([]);
     locationInputRef.current?.blur();
   }
 
-  // Click outside/blur handler for location dropdown
   function handleLocationBlur() {
-    // Use a timeout to allow suggestion click event to fire
     setTimeout(() => setShowLocationDropdown(false), 110);
   }
 
-  // For demo: use placeholder image, but keep the upload field for user experience
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) {
       const file = e.target.files[0];
       setImagePreview(URL.createObjectURL(file));
-      // Actual upload will be enabled once storage bucket is available.
     }
   };
 
@@ -76,10 +110,8 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
       });
       return;
     }
-
     setSubmitting(true);
 
-    // Get user id
     const { data: userData } = await supabase.auth.getUser();
     const user_id = userData?.user?.id;
     if (!user_id) {
@@ -87,8 +119,6 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
       setSubmitting(false);
       return;
     }
-
-    // Note: Once storage bucket is available, upload the image file and use the URL. For now, use a placeholder image.
     const photo_url = imagePreview || "/placeholder.svg";
 
     const { error } = await supabase.from("plants").insert({
@@ -184,12 +214,9 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
         <Input
           type="text"
           className="bg-white"
-          placeholder="Enter your area name (e.g. Oakwood)"
+          placeholder="Enter your city (e.g. Mumbai, London,...)"
           value={location}
-          onChange={e => {
-            setLocation(e.target.value);
-            setShowLocationDropdown(true);
-          }}
+          onChange={handleLocationInputChange}
           required
           disabled={submitting}
           autoComplete="off"
@@ -200,24 +227,32 @@ export default function PostPlantForm({ afterPost }: PostPlantFormProps) {
           aria-controls="location-autocomplete-list"
         />
         {/* Autocomplete dropdown for locations */}
-        {showLocationDropdown && filteredLocations.length > 0 && (
+        {showLocationDropdown && location && (
           <ul
             id="location-autocomplete-list"
-            className="absolute z-40 left-0 w-full bg-white rounded-xl border border-green-100 mt-1 shadow-lg max-h-48 overflow-y-auto animate-fade-in"
+            className="absolute z-50 left-0 w-full bg-white border border-green-100 rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto animate-fade-in"
             style={{ maxWidth: "100%" }}
             role="listbox"
           >
-            {filteredLocations.map((loc, i) => (
-              <li
-                key={loc + i}
-                className="px-4 py-2 cursor-pointer hover:bg-green-50 text-green-800 font-medium"
-                onMouseDown={() => handleSuggestionClick(loc)}
-                role="option"
-                tabIndex={-1}
-              >
-                {loc}
-              </li>
-            ))}
+            {isLoadingSuggestions ? (
+              <li className="px-4 py-2 text-green-600 font-medium">Loading…</li>
+            ) : suggestions.length > 0 ? (
+              suggestions.map((loc, i) => (
+                <li
+                  key={loc + i}
+                  className="px-4 py-2 cursor-pointer hover:bg-green-50 text-green-800 font-medium"
+                  onMouseDown={() => handleSuggestionClick(loc)}
+                  role="option"
+                  tabIndex={-1}
+                >
+                  {loc}
+                </li>
+              ))
+            ) : (
+              location.length >= 2 && (
+                <li className="px-4 py-2 text-green-700">No cities found</li>
+              )
+            )}
           </ul>
         )}
       </div>
