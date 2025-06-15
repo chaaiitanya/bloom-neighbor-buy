@@ -9,6 +9,27 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      favorites: {
+        Row: {
+          created_at: string
+          id: string
+          plant_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          plant_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          plant_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       plants: {
         Row: {
           created_at: string
@@ -98,24 +119,66 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           created_at: string | null
           full_name: string | null
           id: string
+          location: string | null
+          qr_code_url: string | null
+          rating: number | null
+          socials: Json | null
           username: string | null
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string | null
           full_name?: string | null
           id: string
+          location?: string | null
+          qr_code_url?: string | null
+          rating?: number | null
+          socials?: Json | null
           username?: string | null
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string | null
           full_name?: string | null
           id?: string
+          location?: string | null
+          qr_code_url?: string | null
+          rating?: number | null
+          socials?: Json | null
           username?: string | null
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          buyer_id: string
+          id: string
+          plant_id: string
+          price: number
+          seller_id: string
+          sold_at: string
+        }
+        Insert: {
+          buyer_id: string
+          id?: string
+          plant_id: string
+          price: number
+          seller_id: string
+          sold_at?: string
+        }
+        Update: {
+          buyer_id?: string
+          id?: string
+          plant_id?: string
+          price?: number
+          seller_id?: string
+          sold_at?: string
         }
         Relationships: []
       }
