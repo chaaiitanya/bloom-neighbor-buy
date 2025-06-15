@@ -66,29 +66,32 @@ export function usePlantsWithSellers() {
           .in("id", userIds);
 
         if (profiles && !profileErr) {
-          // Map id to full_name
+          // Map id to full_name (allow null or empty fallback)
           for (const profile of profiles) {
-            profileMap[profile.id] = profile.full_name || null;
+            profileMap[profile.id] = profile.full_name?.trim() || "";
           }
         }
       }
 
       // Step 4: Map plants adding correct seller name and description
-      const transformed: PlantRaw[] = data.map((plant: any) => ({
-        id: plant.id,
-        name: plant.name,
-        price: Number(plant.price),
-        photo_url: plant.photo_url,
-        distance: "—",
-        location: plant.location ?? "Unlisted",
-        sellerId: plant.user_id,
-        // Use profile name if exists, fallback to user id
-        seller:
-          (plant.user_id && profileMap[plant.user_id]) ||
-          (plant.user_id ? plant.user_id.slice(0, 6) : "Unknown"),
-        description: plant.description ?? null,
-        type: "all",
-      }));
+      const transformed: PlantRaw[] = data.map((plant: any) => {
+        const hasFullName = plant.user_id && profileMap[plant.user_id] && profileMap[plant.user_id].length > 0;
+        return {
+          id: plant.id,
+          name: plant.name,
+          price: Number(plant.price),
+          photo_url: plant.photo_url,
+          distance: "—",
+          location: plant.location ?? "Unlisted",
+          sellerId: plant.user_id,
+          // Prefer full name, else show "Unknown Seller"
+          seller: hasFullName
+            ? profileMap[plant.user_id]
+            : "Unknown Seller",
+          description: plant.description ?? null,
+          type: "all",
+        };
+      });
 
       setPlants(transformed);
       setLoading(false);
@@ -99,3 +102,4 @@ export function usePlantsWithSellers() {
 
   return { plants, loading, error };
 }
+
