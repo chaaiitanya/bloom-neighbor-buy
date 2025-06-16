@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -101,7 +102,7 @@ export default function Dashboard() {
     <main className="min-h-screen flex flex-col items-center bg-gradient-to-br from-green-100/70 via-white/90 to-green-50/70 dark:bg-gradient-to-br dark:from-[#181f1a] dark:via-[#222b22]/90 dark:to-[#181f1a]/80 px-1 sm:px-4 lg:px-0 pb-16 relative transition-colors">
       {/* Main glass-card wrapper */}
       <div className="w-full max-w-5xl flex flex-col gap-8 mt-8 pb-24">
-        {/* Improved Header Card: 3 columns - left (spacer), center (logo), right (avatar + post) */}
+        {/* Improved Header Card: 3 columns - left (spacer), center (logo), right (post + avatar) */}
         <div className="flex items-center justify-between w-full px-0">
           {/* Left spacer */}
           <div className="flex-1 min-w-0" />
@@ -111,9 +112,8 @@ export default function Dashboard() {
               🍃
             </span>
           </div>
-          {/* Right side: Profile avatar and Post Plant */}
+          {/* Right side: Post Plant and Profile avatar (swapped positions) */}
           <div className="flex justify-end items-center flex-1 gap-2 sm:gap-4 pl-0 sm:pl-4">
-            <DashboardProfileAvatar />
             <Sheet open={isPostSheetOpen} onOpenChange={setIsPostSheetOpen}>
               <SheetTrigger asChild>
                 <Button
@@ -135,6 +135,7 @@ export default function Dashboard() {
                 <PostPlantForm afterPost={handleAfterPost} />
               </SheetContent>
             </Sheet>
+            <DashboardProfileAvatar />
           </div>
         </div>
 
