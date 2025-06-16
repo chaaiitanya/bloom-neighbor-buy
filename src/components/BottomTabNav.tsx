@@ -3,7 +3,7 @@ import { MapPin, Image, MessageCircle, User, MessagesSquare } from "lucide-react
 
 const tabs = [
   { label: "Home", icon: MapPin, route: "/" },
-  { label: "Sell", icon: Image, route: "/post" },
+  { label: "Post", icon: Image, route: "/post" },
   { label: "Chat", icon: MessageCircle, route: "/chat" },
   { label: "Profile", icon: User, route: "/profile" },
 ];
