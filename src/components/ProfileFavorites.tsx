@@ -26,7 +26,7 @@ export default function ProfileFavorites() {
           .from("plants")
           .select(`
             *,
-            profiles: user_id (full_name, avatar_url, rating)
+            profiles!plants_user_id_fkey (full_name, avatar_url, rating)
           `)
           .in("id", plantIds);
         // Step 3: Adapt plant data for PlantCard and PlantDetailDrawer
@@ -35,7 +35,7 @@ export default function ProfileFavorites() {
           name: plant.name,
           price: `$${plant.price}`,
           image: plant.photo_url ?? "/placeholder.svg",
-          distance: plant.distance ?? "—",
+          distance: "—", // Default value since plants table doesn't have distance
           location: plant.location ?? "Unlisted",
           seller: plant.profiles?.full_name ??
             (plant.user_id ? plant.user_id.slice(0, 6) : "Unknown"),
@@ -44,7 +44,7 @@ export default function ProfileFavorites() {
           sellerRating: typeof plant.profiles?.rating === "number" ? Number(plant.profiles.rating) : 4.6,
           sellerSales: 22, // Placeholder - replace if you have sales data
           additionalDetails: plant.description ?? "",
-          type: plant.type ?? "all"
+          type: "all" // Default value since plants table doesn't have type
         }));
         setPlants(mapped);
       } else {
