@@ -21,31 +21,54 @@ export default function ProfileFavorites() {
       const { data: favs } = await supabase.from("favorites").select("*").eq("user_id", user_id);
       if (favs && favs.length) {
         const plantIds = favs.map(f => f.plant_id);
-        // Step 2: Fetch plants and join profiles to get seller info.
-        const { data: allPlants } = await supabase
+        
+        // Step 2: Fetch plants first
+        const { data: plantsData } = await supabase
           .from("plants")
-          .select(`
-            *,
-            profiles!plants_user_id_fkey (full_name, avatar_url, rating)
-          `)
+          .select("*")
           .in("id", plantIds);
-        // Step 3: Adapt plant data for PlantCard and PlantDetailDrawer
-        const mapped = (allPlants || []).map(plant => ({
-          id: plant.id,
-          name: plant.name,
-          price: `$${plant.price}`,
-          image: plant.photo_url ?? "/placeholder.svg",
-          distance: "—", // Default value since plants table doesn't have distance
-          location: plant.location ?? "Unlisted",
-          seller: plant.profiles?.full_name ??
-            (plant.user_id ? plant.user_id.slice(0, 6) : "Unknown"),
-          sellerId: plant.user_id,
-          sellerAvatar: plant.profiles?.avatar_url ?? "",
-          sellerRating: typeof plant.profiles?.rating === "number" ? Number(plant.profiles.rating) : 4.6,
-          sellerSales: 22, // Placeholder - replace if you have sales data
-          additionalDetails: plant.description ?? "",
-          type: "all" // Default value since plants table doesn't have type
-        }));
+        
+        if (!plantsData || plantsData.length === 0) {
+          setPlants([]);
+          setLoading(false);
+          return;
+        }
+
+        // Step 3: Get all unique user IDs from plants
+        const userIds = [...new Set(plantsData.map(plant => plant.user_id))];
+        
+        // Step 4: Fetch profiles for those users
+        const { data: profilesData } = await supabase
+          .from("profiles")
+          .select("id, full_name, avatar_url, rating")
+          .in("id", userIds);
+
+        // Step 5: Create a map of user_id to profile for quick lookup
+        const profileMap = (profilesData || []).reduce((acc, profile) => {
+          acc[profile.id] = profile;
+          return acc;
+        }, {} as Record<string, any>);
+
+        // Step 6: Combine plant data with profile data
+        const mapped = plantsData.map(plant => {
+          const profile = profileMap[plant.user_id];
+          return {
+            id: plant.id,
+            name: plant.name,
+            price: `$${plant.price}`,
+            image: plant.photo_url ?? "/placeholder.svg",
+            distance: "—", // Default value since plants table doesn't have distance
+            location: plant.location ?? "Unlisted",
+            seller: profile?.full_name ?? 
+              (plant.user_id ? plant.user_id.slice(0, 6) : "Unknown"),
+            sellerId: plant.user_id,
+            sellerAvatar: profile?.avatar_url ?? "",
+            sellerRating: typeof profile?.rating === "number" ? Number(profile.rating) : 4.6,
+            sellerSales: 22, // Placeholder - replace if you have sales data
+            additionalDetails: plant.description ?? "",
+            type: "all" // Default value since plants table doesn't have type
+          };
+        });
         setPlants(mapped);
       } else {
         setPlants([]);
